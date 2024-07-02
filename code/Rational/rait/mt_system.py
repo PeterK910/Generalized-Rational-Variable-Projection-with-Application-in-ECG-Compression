@@ -36,6 +36,3 @@ def mt_system(len, poles):
         fi = fi * bla
 
     return mts
-
-# poles = np.array([[0.5, 0.3, 0.1]])  
-# mts = mt_system(100, poles)  
