@@ -11,4 +11,3 @@ code/Rational.egg-info/dependency_links.txt
 code/Rational.egg-info/not-zip-safe
 code/Rational.egg-info/requires.txt
 code/Rational.egg-info/top_level.txt
-tests/test_norm_sig.py

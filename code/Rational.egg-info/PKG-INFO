@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: Rational
-Version: 0.0.0
+Version: 0.1
 Summary: valami
 Author: me
 License: MIT
@@ -11,12 +11,10 @@ Platform: cygwin
 Platform: win32
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3 :: Only
-Classifier: Programming Language :: Python :: 3.6
-Classifier: Programming Language :: Python :: 3.7
-Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
-Requires-Python: >=3.6
-Requires-Dist: requests>=2
+Requires-Python: >=3.9
+Requires-Dist: numpy
+Requires-Dist: matplotlib
 Provides-Extra: testing
 Requires-Dist: pytest>=6.0; extra == "testing"
 Requires-Dist: pytest-cov>=2.0; extra == "testing"

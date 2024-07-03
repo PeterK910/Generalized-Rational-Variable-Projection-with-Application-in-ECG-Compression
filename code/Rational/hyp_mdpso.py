@@ -72,7 +72,7 @@
 
 import numpy as np
 import random
-from Rational import addimag
+from Rational.rait import addimag
 
 def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = np.array([8,8],[8,8]), show = False, insparts = {}):
     

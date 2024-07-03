@@ -1,4 +1,4 @@
-from Rational import norm_sig as testing
+from Rational.norm_sig import norm_sig
 import numpy as np
 import pytest
 import numpy.testing as npt
@@ -10,6 +10,6 @@ import numpy.testing as npt
 ])
 def test_1(input, expected_norm, expected_base):
     signal = np.array(input)
-    norm, base=testing.norm_sig(signal)
+    norm, base=norm_sig(signal)
     npt.assert_array_equal(norm, expected_norm)
     npt.assert_array_equal(base, expected_base)

@@ -1,5 +1,5 @@
 # Generalized Rational Variable Projection With Application in ECG Compression [1]
-## Structure of the MatLab Toolbox
+## Structure of the Python Toolbox
 ```
 / [root]
 ├── code
@@ -8,7 +8,7 @@
 │   ├── Hermite
 │   ├── Rational
 │   │ 
-│   └── [matlab scripts]
+│   └── [python scripts]
 │   │ 
 │   └── [VarPro_demos.pdf]
 │

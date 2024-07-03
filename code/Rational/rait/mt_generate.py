@@ -1,5 +1,5 @@
-import numpy as np
-from Rational.rait import mt_system
+import numpy
+from Rational.rait.mt_system import mt_system
 
 def mt_generate(len, poles, coeffs):
     """
@@ -22,14 +22,19 @@ def mt_generate(len, poles, coeffs):
     np, mp = poles.shape
     nl, ml = coeffs.shape
 
-    # Check input dimensions and conditions
     if np != 1 or nl != 1 or mp != ml or len < 2:
         raise ValueError('Wrong parameters!')
-    if np.any(np.abs(poles) >= 1):
+    if numpy.any(numpy.abs(poles) >= 1):
         raise ValueError('Bad poles!')
 
-    # Calculate the linear combination of the MT system elements
-    # using matrix multiplication
-    v = np.matmul(coeffs, mt_system(len, poles))
+    """
+    The v is the linear combination of the MT system elements.
+
+             mt1  mt1  mt1 ... mt1
+             mt2  mt2  mt2 ... mt2
+    co1 co2  v    v    v       v
+    """
+
+    v = numpy.matmul(coeffs, mt_system(len, poles))
 
     return v
