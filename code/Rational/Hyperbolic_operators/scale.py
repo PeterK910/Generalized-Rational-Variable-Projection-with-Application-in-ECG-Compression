@@ -3,8 +3,9 @@ from Rational.Hyperbolic_operators.eBlaschke import eBlaschke
 import matplotlib.pyplot as plt
 import numpy as np
 
-def scale(w1, w2, beta, draw, color=[0,0,0]):
-    if w1==w2:
+
+def scale(w1, w2, beta, draw, color=[0, 0, 0]):
+    if w1 == w2:
         return 0, 0
     else:
         w, pole, eps, p = section(w1, w2, 100, draw, color)
@@ -14,6 +15,6 @@ def scale(w1, w2, beta, draw, color=[0,0,0]):
             if isinstance(color, str):
                 plt.plot(w05, color, markersize=10)
             else:
-                plt.plot(w05, color, marker='.', markersize=10)
-        
+                plt.plot(w05, color, marker=".", markersize=10)
+
         return s05, w05

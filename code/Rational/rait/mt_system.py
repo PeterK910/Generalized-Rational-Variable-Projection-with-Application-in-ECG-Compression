@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def mt_system(len, poles):
     """
     Generates the Malmquist-Takenaka system.
@@ -13,14 +14,14 @@ def mt_system(len, poles):
     Returns:
         mts : numpy array
             The elements of the MT system at the uniform sampling points as row vectors.
-    
+
     Copyright: (C) ELTE IK NumAnal, GPL 1.1 ??
     """
     np_, mp = poles.shape
     if np_ != 1 or len < 2:
-        raise ValueError('Wrong parameters!')
+        raise ValueError("Wrong parameters!")
     if np.any(np.abs(poles) >= 1):
-        raise ValueError('Bad poles!')
+        raise ValueError("Bad poles!")
 
     mts = np.zeros((mp, len), dtype=complex)
     t = np.linspace(-np.pi, np.pi, len + 1)[:-1]

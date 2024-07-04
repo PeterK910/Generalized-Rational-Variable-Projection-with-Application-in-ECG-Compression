@@ -1,6 +1,7 @@
 import numpy
 from Rational.rait.mt_system import mt_system
 
+
 def mt_generate(len, poles, coeffs):
     """
     Generates a function in the space spanned by the MT system.
@@ -23,9 +24,9 @@ def mt_generate(len, poles, coeffs):
     nl, ml = coeffs.shape
 
     if np != 1 or nl != 1 or mp != ml or len < 2:
-        raise ValueError('Wrong parameters!')
+        raise ValueError("Wrong parameters!")
     if numpy.any(numpy.abs(poles) >= 1):
-        raise ValueError('Bad poles!')
+        raise ValueError("Bad poles!")
 
     """
     The v is the linear combination of the MT system elements.
