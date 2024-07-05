@@ -81,6 +81,7 @@ from Rational.Hyperbolic_operators.scale import scale
 from Rational.Hyperbolic_operators.rho import rho
 import numpy as np
 import scipy.io as sio
+import matplotlib as plt
 
 
 def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False, insparts = []):
@@ -103,12 +104,12 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
         Dmax = Dmax[0][0]
 
     # Initializing the swarm
-    hf = addimag(f)
-    xd = np.random.randint(1, Dmax+1, s)
-    vd = np.random.randint(1, Dmax+1, s)
-    xd_ = xd.copy()
-    gbest = np.ones(Dmax, dtype=int)
-
+    hf = addimag(f) # Computing the Hilbert-transform of 'f'.
+    xd = np.random.randint(1, Dmax+1, s) # Initializing the particle's dimesions.
+    vd = np.random.randint(1, Dmax+1, s) # Initializing the particles's dimension velocities.
+    xd_ = xd.copy() # Initializing the personal best dimensions of the particles.
+    gbest = np.ones(Dmax, dtype=int) # Initializing the gbest particle at each dimenions.
+    #print(gbest)
     # Sorting user defined inserted particles
     if insparts:
         if len(insparts) > s:
@@ -117,51 +118,59 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
             insparts = convert2ps(insparts, Dmax)
     else:
         insparts = [None] * Dmax
-
+    #print(insparts)
     # Initializing the compression ratio for each dimension
     cr = np.ones(len(ps))
     for i in range(len(cr)):
         cn = np.sum(ps[i]) # number of complex coefficients
         pn = len(ps[i])
         cr[i] = (2 * (cn + pn) / len(f)) * 100
-
+    #print(ps)
     # Step 1: Initializing positions and velocities
-    xx = [None] * Dmax
-    vx = [None] * Dmax
-    xy = [None] * Dmax
-    xy_g = [None] * Dmax
-    pbesterr_a = [None] * Dmax
-    gbesterr_d = [None] * Dmax
-    print(gbesterr_d)
+    xx = [None] * Dmax # Positions of the particles.
+    vx = [None] * Dmax # Velocities of the particles.
+    xy = [None] * Dmax # Personal best positions of the particles.
+    xy_g = [None] * Dmax # Global best position in each dimension.
+    pbesterr_a = [None] * Dmax # Personal best errors of the particles.
+    gbesterr_d = [None] * Dmax # Global best errors in each dimension.
 
+    #print(Dmin, Dmax)
     for d in range(Dmin, Dmax+1):
-        dim = 2 * len(ps[d-1])
+        ##print("ps:",ps)
+        dim = 2 * len(ps[d-1][0]) # The poles are complex numbers, so the total dimension of the problem is 2*num_poles.
         xx[d-1] = np.zeros((dim, s))
         vx[d-1] = np.zeros((dim, s))
 
+        # Initilaizing positions
         r = np.random.rand(dim//2, s)
         phi = 2 * np.pi * np.random.rand(dim//2, s)
         init_pole = r * np.exp(1j * phi)
         xx[d-1][0::2, :] = np.real(init_pole)
         xx[d-1][1::2, :] = np.imag(init_pole)
 
+        # Initilaizing velocities  
         r = np.random.rand(dim//2, s)
         phi = 2 * np.pi * np.random.rand(dim//2, s)
         init_vel = r * np.exp(1j * phi)
         vx[d-1][0::2, :] = np.real(init_vel)
         vx[d-1][1::2, :] = np.imag(init_vel)
 
+        # Inserting user defined particles to the initial swarm.
         if insparts[d-1] is not None:
-            insdim = insparts[d-1].shape[1]
-            xx[d-1][:, :insdim] = insparts[d-1]
+            insdim = insparts[d-1].shape[1] # Number of inserted particle at dimension 'd'.
+            xx[d-1][:, :insdim] = insparts[d-1] # Overwrite the first insdim number of particles at dimension 'd'.
 
-        err = errors_d(hf, xx[d-1], ps[d-1], alpha, eps)
+        ##print("xx",xx[d-1])
+        ###print("ps",ps[d-1])
+
+        err = errors_d(hf, xx[d-1], ps[d-1][0], alpha, eps)
+        #print(eps)
         xy[d-1] = xx[d-1].copy()
         gbest[d-1] = np.argmin(err)
         xy_g[d-1] = xx[d-1][:, gbest[d-1]].copy()
         pbesterr_a[d-1] = err
         gbesterr_d[d-1] = err[gbest[d-1]]
-
+    print(gbesterr_d)
     err = errors_gd(hf, xy_g, ps, s, alpha, eps)
     dbest = np.argmin(err) + 1
 
@@ -192,12 +201,23 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
             ind = xd == xd[a]
             ind[a] = 0
             err_d = err[ind]
-
-            if err[a] < min([gbesterr_d[xd[a]-1], min(err_d)]):
+            #print(ind)
+            #print(err)
+            """
+            if err[a] < min_2arg([gbesterr_d[xd[a]-1], min_1arg(err_d)]):
                 gbest[xd[a]-1] = a
                 xy_g[xd[a]-1] = xx[xd[a]-1][:, a].copy()
                 gbesterr_d[xd[a]-1] = err[a]
                 if err[a] < gbesterr_d[dbest-1]:
+                    dbest = xd[a]
+            """
+            min_err_d = min(err_d) if len(err_d)>0 else float('inf')
+
+            if err[a] < min(gbesterr_d[xd[a]-1], min_err_d):  # (Step 3.1.4.)
+                gbest[xd[a]-1] = a
+                xy_g[xd[a]-1] = xx[xd[a]-1][:, a].copy()
+                gbesterr_d[xd[a]-1] = err[a]
+                if err[a] < gbesterr_d[dbest-1]:  # (Step 3.1.4.2.)
                     dbest = xd[a]
 
         for m in range(maxpn):
@@ -230,82 +250,157 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
 
         if show:
             db = dbest
-            gbest_coords = xy_g[db-1]
-            mult = ps[db-1]
-            seg = f
+            gbest_coords = xy_g[db]
+            mult = ps[db][:]
+            seg = f  # Segmenting 'f' into smaller partitions.
             len_f = len(f)
             
+            # Subtracting the baseline.
             seg, base_line = norm_sig(seg)
             hseg = addimag(seg)
             period = 1
-            tt = np.linspace(0, 2*np.pi, len(f) + 1)[:-1]
+            tt = np.linspace(0, 2 * np.pi, len(f) + 1)
+            tt = tt[:len(f)]
             
+            # Displaying the actual dbest dimension and multiplicities and lengths.
             print(f'Dbest dimension: {dbest}')
             print(f'Dbest multiplicities: {mult}')
             print(f'Dbest length: {len_f}')
             
-            sz = np.zeros_like(xx[db-1])
-            top_sz = 0
-            for i in range(xx[db-1].shape[1]):
+            # Displaying the pole configuration of each particle in the dbest dimension.
+            sz = np.zeros_like(xx[db])
+            top_sz = 1
+            for i in range(xx[db].shape[1]):
                 if db == xd[i]:
-                    sz[:, top_sz] = xx[db-1][:, i]
+                    sz[:, top_sz - 1] = xx[db][:, i]
                     top_sz += 1
-            sz = array2complex(sz[:, :top_sz]).T
+            sz = array2complex(sz[:, :top_sz - 1]).T
 
+            # Calculating and quantizing the poles.
             mpoles = periodize_poles(multiply_poles(array2complex(gbest_coords).T, mult), period)
             mpoles_r = quant(mpoles, 'pole', eps)
-
+            
+            # Calculating the coefficients WITHOUT quantized poles.
             c = mt_coeffs(hseg, mpoles)
+            # Calculating the coefficients WITH quantized poles.
             c_r = mt_coeffs(hseg, mpoles_r)
+            # Quantizing the coefficients.
             c_r = quant(c_r, 'coeff', eps)
 
+            # Computing the error in terms of PRD.
             fs_r = mt_generate(len_f, mpoles_r, c_r)
             prd_r = 100 * np.sqrt(np.sum((seg - np.real(fs_r))**2) / np.sum((seg - np.mean(seg))**2))
             fs = mt_generate(len_f, mpoles, c)
             prd = 100 * np.sqrt(np.sum((seg - np.real(fs))**2) / np.sum((seg - np.mean(seg))**2))
-            cn = np.sum(mult)
+            
+            # Computing the compression ratio (CR).
+            cn = np.sum(mult) * period  # number of complex coefficients
             pn = len(mult)
-            cr = 2 * (cn + pn) / len(f) * 100
+            cr = (2 * (cn + pn) / len_f) * 100
+            
+            plt.subplot(1, 2, 1)
+            unit_disc = np.exp(1j * tt)
+            plt.plot(unit_disc, 'k')
+            plt.title(f'step: {t}')
+            plt.hold(True)
+            
+            styles = ['bo', 'bx', 'b.', 'b+', 'bs', 'bv', 'bp', 'bh']
+            styles_best = ['ro', 'rx', 'r.', 'r+', 'rs', 'rv', 'rp', 'rh']
+            
+            for j in range(len(mult)):
+                plt.plot(sz[:, j], styles[j])
+            
+            # Plotting the global best pole configuration in the dbest dimension.
+            # Note: sudden changes on this figure indicate changes in the dbest dimension.
+            for i in range(len(mult)):
+                plt.plot(array2complex(gbest_coords[i*2-1:i*2]), styles_best[i], markersize=15, linewidth=4)
+            
+            plt.hold(False)
+            
+            # Displaying the rational approximation of the segment.
+            plt.subplot(1, 2, 2)
+            plt.plot(tt, np.real(hf), 'b', linewidth=4)
+            plt.hold(True)
+            # plt.plot(tt[:len_f], np.real(seg) + base_line, 'g', linewidth=3)
+            # plt.plot(tt[:len_f], np.real(fs) + base_line, 'r', linewidth=3)
+            plt.plot(tt[:len_f], np.real(fs_r) + base_line, 'R', linewidth=1)
+            
+            plt.legend(['Original signal', f'CR: {len_f / (2 * (cn + pn))}:1, PRD: {prd_r}'])
+            plt.hold(False)
+            plt.axis('tight')
+            plt.draw()
+    
+    # Return the gbest poles and the quantized coefficients of the dbest dimension.
+    m = ps[dbest][0]
+    poles = array2complex(xy_g[dbest])
 
-            print(f'PRD: {prd:.2f}%')
-            print(f'PRD_r: {prd_r:.2f}%')
-            print(f'Compression ratio: {cr:.2f}%')
-            print(f'Max pole distance: {np.max(np.abs(np.abs(mpoles) - 1))}')
-            print(f'Number of poles: {len(mpoles)}')
+    # Return dbest length.
+    l = len(f)
 
-    return xy_g, gbesterr_d, cr
+    # Return the base_line.
+    seg, bl = norm_sig(f[:l])
+    hseg = addimag(seg)
+    hseg = np.reshape(hseg, (1, len(hseg)))
+    # Quantizing the poles.
+    poles = quant(poles, 'pole', eps).T   
+    p = poles
+    mpoles = periodize_poles(multiply_poles(poles, m), 1)
+    mpoles=np.reshape(mpoles, (1, len(mpoles)))
+
+    # Calculating the coefficients WITH quantized poles.
+    c = mt_coeffs(hseg, mpoles)
+
+    # Quantizing the coefficients.
+    c = quant(c[0], 'coeff', eps)
+    #print(c)
+
+    # Calculating the PRD for 'f'.
+    aprx = np.real(mt_generate(l, mpoles, c))
+    prd = 100 * np.sqrt(np.sum((seg - aprx) ** 2) / np.sum((seg - np.mean(seg)) ** 2))
+
+    return p, c, m, dbest, l, bl, prd
 
 # Computing the error function of a particle.
 def error(hf, x, ps, alpha, eps):
     period = 1
     f = np.real(hf)
+    if len(x.shape)<2:
+        x=np.reshape(x, (x.shape[0], 1))
+    #print("->",x)
+    
     err = np.zeros(x.shape[1])
-    mult = ps[0]
-    print("mult", mult)
+    mult = ps.copy()
+    ###print("mult", mult)
     length = len(f)
     seg = f.copy() # Segmenting 'f' into smaller partitions.
 
     # Subtracting the baseline
     seg, base_line = norm_sig(seg)
+    #print(seg)
     hseg = addimag(seg)
-    print(x)
+    #print("hseg:",hseg)
+    #print(x.shape)
+    ####print(x)
     for i in range(x.shape[1]):
-        print("--",array2complex(x[:, i]).T)
-        print("--",mult)
+        #print(i,(x[:, i]))
+        #print(i,array2complex(x[:, i]).T)
+        if isinstance(mult[0], np.ndarray):
+            mult=mult[0]
         poles = periodize_poles(multiply_poles(array2complex(x[:, i]).T, mult), period)
+        #print("pole",poles)
         
         # Quantizing the poles
         poles = quant(poles, 'pole', eps)
-        
+        poles=np.reshape(poles, (1, poles.shape[0]))
         # Computing the coefficients
         mts = mt_system(length, poles)
-        co = (mts @ hseg.T / length).T
+        co = (np.matmul(mts, hseg.T) / length).T
         
         # Quantizing the coefficients
         co = quant(co, 'coeff', eps)
         
         # Computing the percentage root mean square difference (PRD)
-        aprx = np.real(co @ mts)
+        aprx = np.real(np.matmul(co, mts))
         prd = 100 * np.sqrt(np.sum((seg - aprx) ** 2) / np.sum((seg - np.mean(seg)) ** 2))
         
         # Computing the compression ratio
@@ -314,6 +409,7 @@ def error(hf, x, ps, alpha, eps):
         cr = (2 * (cn + pn) / length) * 100
         
         err[i] = alpha * prd + (1 - alpha) * cr
+        #print("co", err[i])
     
     return err
 # Converting inserted particles from struct array to cell array that is compatible with the polespace
@@ -380,13 +476,18 @@ def Cxd(xd_prev, xd_next, Dmin, Dmax, PD, maxPD):
 def array2complex(ar):
     if len(ar.shape)==1:
         ar=np.reshape(ar, (ar.shape[0], 1))
-    print("shape",(ar.shape))
+    ###print(ar)
+    ###print("shape",(ar.shape))
 
     z = np.zeros((ar.shape[0] // 2, ar.shape[1]), dtype=complex)
+    ###print(z)
     for i in range(ar.shape[1]):
         for j in range(ar.shape[0] // 2):
             z[j, i] = ar[2 * j, i] + 1j * ar[2 * j + 1, i]
-    return z
+    ###print(z)
+    z=np.reshape(z, (1, len(z)))
+    ###print("ujforma:",z)
+    return z[0]
 
 # Converting an array of complex numbers to an array of real numbers
 def complex2array(z):
@@ -417,3 +518,4 @@ def quant(data, roundmode, eps):
         data_r[data_r >= 1] = 1 - 1e-6  # Necessary to satisfy abs(poles) < 1
 
     return data_r * np.exp(1j * data_phi)
+

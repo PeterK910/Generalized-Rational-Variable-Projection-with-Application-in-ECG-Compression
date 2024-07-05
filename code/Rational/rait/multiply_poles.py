@@ -20,11 +20,11 @@ def multiply_poles(p, m):
     """
     if len(p) != len(m):
         raise ValueError("Bad poles, length of p and m must be equal!")
-
     n = p.shape[0]
     pp = np.zeros(np.sum(m), dtype=p.dtype)
     innen = 0
     for i in range(n):
+        print(m[i])
         pp[innen: innen + m[i]] = p[i] * np.ones(1, m[i])
         innen += m[i]
 

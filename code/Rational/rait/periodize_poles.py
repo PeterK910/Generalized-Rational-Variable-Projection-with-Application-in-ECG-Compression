@@ -18,7 +18,7 @@ def periodize_poles(p, m):
     Copyright: (C) ELTE IK NumAnal, GPL 1.1 ??
     """
 
-    pp = numpy.zeros(m * len(p))
+    pp = numpy.zeros(m * len(p), dtype=complex)
     for i in range(1, m + 1):
         pp[(i - 1) * len(p): i * len(p)] = p
 
