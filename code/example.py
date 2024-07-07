@@ -6,6 +6,7 @@ from Rational.norm_sig import norm_sig
 from Rational.rait.mt_generate import mt_generate
 from Rational.rait.multiply_poles import multiply_poles
 from Rational.rait.periodize_poles import periodize_poles
+from Rational.Hyperbolic_operators.draw_unitcircle import draw_unitcircle
 
 
 #------------- Signal approximation by using orthogonal rational functions -------------
@@ -39,7 +40,7 @@ p, c, m, dbest, l, bl, prd = hyp_mdpso(normsig, ps_file, swarm, alpha, iterno, a
 # Reconstructing the signal
 mpoles = periodize_poles(multiply_poles(p, m), 1)
 mpoles = np.reshape(mpoles, (1, len(mpoles)))
-print(mpoles.shape)
+#print(mpoles.shape)
 aprx = np.real(mt_generate(M, mpoles, c))
 
 # Displaying statistical information
@@ -51,26 +52,17 @@ print(f'Inverse pole configuration in the best dimension: m=({", ".join(map(str,
 
 # Plotting the original ECG and the reconstructed signal
 fig, axes = plt.subplots(1, 2, figsize=(13, 6))
+draw_unitcircle(p,m)
+
 x = np.arange(1, M + 1)
-axes[0].set_title('Unit Circle')
-t = np.linspace(0,np.pi*2,100)
-axes[0].plot(np.cos(t), np.sin(t), linewidth=2)
+
+axes[0].set_title('Original Signal vs. Approximation')
+axes[0].plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
+axes[0].plot(x, (aprx + baseline).flatten(), 'r', label='Approximation', linewidth=2)
 axes[0].grid(True)
-axes[0].axis('square')
+axes[0].legend()
+axes[0].set_ylim([-7, 7])
 
-axes[1].set_title('Original Signal vs. Approximation')
-axes[1].plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
-axes[1].plot(x, (aprx + baseline).flatten(), 'r', label='Approximation', linewidth=2)
-axes[1].grid(True)
-axes[1].axis('square')
-axes[1].legend()
-
-ax = plt.gca()
-ax.set_xlim([100, 300])
-ax.set_ylim([-10, 10])
-
-#plt.ylim(-6,5)
-#plt.xlim(50,200)
 # Saving the resulting plot to a PNG file
 plt.savefig('results/rational_signal_approx.png')
 #plt.show()

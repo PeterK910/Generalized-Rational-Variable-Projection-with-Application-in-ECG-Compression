@@ -20,7 +20,7 @@ def addimag(v):
 
     if len(v.shape) != 1:
         raise ValueError("Wrong vector!")
-    if not np.all(np.isreal(v)):
+    if np.max(np.imag(v)) != 0:
         raise ValueError("The vector is not real!")
 
     vf = np.fft.fft(v)

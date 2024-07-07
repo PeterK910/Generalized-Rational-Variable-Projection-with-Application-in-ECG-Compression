@@ -44,10 +44,10 @@ poles = [
     0.24782 - 0.060488j,
     0.24782 - 0.060488j,
 ]
+eps=np.array([[3,3],[7,7],[8,8]])
+#print(quant(poles, 'pole', eps))
 
-#print(quant(poles, 'pole', np.array([[3,3],[7,7],[8,8]])))
-
-from Rational.rait.addimag import addimag
+from Rational.rait.mt_system import mt_system
 from Rational.rait.multiply_poles import multiply_poles
 from Rational.rait.periodize_poles import periodize_poles
 
@@ -59,5 +59,15 @@ a=np.array([0.4832,0.090415,0.24194,-0.40237,0.3933,-0.48214])
 period=1
 mult=np.array([6,8,8])
 
-p=periodize_poles(multiply_poles(array2complex(a), mult), period)
-print(p)
+#p=periodize_poles(multiply_poles(array2complex(a), mult), period)
+#print(p)
+
+
+length=475
+poles=np.array([[0.35714+0.61859j,0.35714+0.61859j,0.28571+0j,0.28571+0j,0.28571+0j,0.28571+0j]])
+
+#print(mt_system(length, poles))
+
+co=np.array([0.34784-0.089215j,0.97629-0.11797j,0.51235+0.8276j,-0.46898+0.37197j,-0.26357-0.54182j,0.051309-0.5783j,0.3788-0.46863j,0.45514-0.21975j,0.3501+0.084662j,0.15658+0.21882j,-0.051752+0.22843j,-0.12794+0.11044j,-0.00048102+0.00031557j,-0.00051352-0.00025913j,-3.191e-05-0.00057421j,0.00048148-0.00031433j,0.00051267+0.00026015j,3.0599e-05+0.00057399j,-0.00048194+0.00031308j,-0.00051182-0.00026118j])
+print(quant(co, 'coeff', eps))
+
