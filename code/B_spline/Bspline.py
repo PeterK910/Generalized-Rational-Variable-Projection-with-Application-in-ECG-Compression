@@ -40,33 +40,18 @@ import numpy as np
 
 def Bspline(l, k, xk, x):
     if l == 0:
-        y = np.ones_like(x) * (x >= xk[k]) * (x < xk[k+1])
+        y = np.ones_like(x) * (x >= xk[k-1]) * (x < xk[k])
     else:
-        if (xk[k + l] - xk[k]) != 0:
-            y1 = Bspline(l - 1, k, xk, x) * (x - xk[k]) / (xk[k + l] - xk[k])
+        
+        if (xk[k-1 + l] - xk[k-1]) != 0:
+            y1 = Bspline(l - 1, k, xk, x) * (x - xk[k-1]) / (xk[k-1 + l] - xk[k-1])
         else:
             y1 = np.zeros_like(x)
         
-        if (xk[k + l + 1] - xk[k + 1]) != 0:
-            y2 = Bspline(l - 1, k + 1, xk, x) * (xk[k + l + 1] - x) / (xk[k + l + 1] - xk[k + 1])
+        if (xk[k + l] - xk[k]) != 0:
+            y2 = Bspline(l - 1, k+1, xk, x) * (xk[k + l] - x) / (xk[k + l ] - xk[k ])
         else:
             y2 = np.zeros_like(x)
-        
         y = y1 + y2
-    
     return y
 
-# Example usage:
-l = 0
-k = 2
-xk = np.array([0, 1, 2, 3, 4, 5, 6])
-x = np.linspace(0, 6, 100)
-y = Bspline(l, k, xk, x)
-print(y)
-
-import matplotlib.pyplot as plt
-plt.plot(x, y)
-plt.title('B-spline')
-plt.xlabel('x')
-plt.ylabel('y')
-#plt.show()

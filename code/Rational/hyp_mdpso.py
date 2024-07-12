@@ -415,7 +415,7 @@ def error(hf, x, ps, alpha, eps):
         # Computing the percentage root mean square difference (PRD)
         aprx = np.real(np.matmul(co, mts))
         #print(np.sqrt(np.sum((seg-aprx))**2))
-        prd = 100 * np.sqrt(np.sum(np.pow((seg - aprx), 2)) / np.sum(np.pow((seg - np.mean(seg)), 2)))
+        prd = 100 * np.sqrt(np.sum(np.power((seg - aprx), 2)) / np.sum(np.power((seg - np.mean(seg)), 2)))
         #print(seg - aprx)
         
         # Computing the compression ratio
@@ -425,7 +425,7 @@ def error(hf, x, ps, alpha, eps):
         
         err[i] = alpha * prd + (1 - alpha) * cr
         #print("co", err[i])
-    print(err)
+    #print(err)
     return err
 
 # Converting inserted particles from struct array to cell array that is compatible with the polespace
