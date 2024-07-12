@@ -8,15 +8,18 @@
 │   ├── Hermite
 │   ├── Rational
 │   │ 
-│   └── [python scripts]
+│   ├── [python scripts]
 │   │ 
 │   └── [VarPro_demos.pdf]
 │
 ├── data
 │   └── [ecg data]
+│
+├── results
+│   └── [saved figures]
 │   
-└── results
-    └── [saved figures]
+└── tests
+    └── [test files]
 ```
 
 - **Code** contains various algorithms for approximating ECG signals using adaptive wavelets [2], B-splines [3], Hermite functions [4], and rational functions [5]. Each directory contains an *example.m* script, which demonstrates the algorithms step by step. These demonstrations are also available in pdf format. The animations in *VarPro_demos.pdf* work in Adobe Acrobat Reader.
