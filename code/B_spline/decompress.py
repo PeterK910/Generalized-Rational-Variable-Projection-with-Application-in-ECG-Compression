@@ -25,15 +25,19 @@ def decompress(signal, knots, coeff, order, bl, show):
     print(prd)
     print(cr)
     if show:
+        """
         plt.figure()
-        plt.plot(x, signal, 'b', label='Original Signal')
+        plt.gca().set_aspect('auto', adjustable='box')
+        plt.plot(x, signal[0], 'b', label='Original Signal')
         plt.plot(x, s, 'r', linewidth=2, label='Approximation')
-        plt.stem(knots, signal[knots], 'r.', markersize=15)
-        plt.legend()
+        plt.stem(knots, signal[0][knots-1], 'r.')
         plt.grid(True)
+        plt.legend()
         plt.axis('square')
+        plt.ylim(-6, 6)
         plt.tight_layout()
         plt.show()
+        """
 
     return s, prd
 

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as FuncAnimation
 
 from B_spline.predict_mse import predict_mse
 from B_spline.bspline_coeffs import bspline_coeffs
@@ -15,11 +16,13 @@ def compress(sig, order, prd_limit, init_knot, show):
 
     knots = init_knot
     not_knots = []
+    fig, ax=plt.subplots(2, height_ratios=[1,3])
     c, prd, s, Rl, zl = bspline_coeffs(psig, knots, order)
 
     step = 1
     # print('prd', prd)
     # print('prd_lim', prd_limit)
+    #plt.subplot(2, 2, 1)
     while prd < prd_limit:
         wpp = np.zeros(len(knots) - 2)
         for i in range(2, len(knots)):
@@ -58,36 +61,41 @@ def compress(sig, order, prd_limit, init_knot, show):
 
         if show:
             not_knots.append(not_knot)
-            plt.figure()
+            ax[0].clear()
+            #ax[1].clear()
             width = np.max(psig) - np.min(psig)
             bl = np.min(s) - 0.1 * width
-            plt.plot(
+            ax[0].plot(
                 not_knots,
                 np.ones(len(not_knots)) * bl,
                 "bx",
                 markersize=12,
                 linewidth=2,
             )
-            plt.plot(knots, np.ones(len(knots)) * bl, "r.", markersize=15)
-            plt.legend(
+            ax[0].plot(knots, np.ones(len(knots)) * bl, "r.", markersize=5)
+            ax[0].legend(
                 [
                     "Original signal",
                     f"CR: {100 * (len(c) + len(knots)) / len(sig):.0f}%, PRD: {prd:.02f}%",
                 ]
             )
-            plt.axis(
-                [0, len(sig), np.min(psig) - 0.2 * width, np.max(psig) + 0.1 * width]
-            )
-            plt.draw()
-            step += 1
+            #ax[0].axis(
+            #    [0, len(sig), np.min(psig) - 0.2 * width, np.max(psig) + 0.1 * width]
+            #)
             plt.title(f"Iteration {step}")
+            plt.draw()
+            plt.pause(0.01)
+            """
+            """
+            step += 1
 
     coeff = c
 
     if show:
+        #plt.show()
         plt.figure()
-        plt.subplot(2, 2, [1, 4])
-        c, prd, s = bspline_coeffs(psig, knots, order)
+        #plt.subplot(2, 2, 2)
+        c, prd, s, _, _ = bspline_coeffs(psig, knots, order)
         plt.plot(psig, "b", linewidth=4)
         plt.plot(s, "r", linewidth=2)
         width = np.max(s) - np.min(s)
@@ -102,11 +110,11 @@ def compress(sig, order, prd_limit, init_knot, show):
             markersize=12,
             linewidth=2,
         )
-        plt.stem(knots, psig[knots], "r.", markersize=15)
+        plt.stem(knots, psig[knots-1], "r.")
         plt.legend(["Original signal", f"PRD: {prd:.02f}%"])
         plt.axis([0, len(sig), np.min(psig) - 0.2 * width, np.max(psig) + 0.1 * width])
         plt.title("Approximation")
 
-    plt.show()
+        plt.show()
 
     return s, knots, coeff, prd

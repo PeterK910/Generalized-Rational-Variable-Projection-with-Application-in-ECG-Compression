@@ -64,5 +64,5 @@ axes[0].legend()
 axes[0].set_ylim([-7, 7])
 
 # Saving the resulting plot to a PNG file
-plt.savefig('results/rational_signal_approx.png')
-#plt.show()
+#plt.savefig('results/rational_signal_approx.png')
+plt.show()

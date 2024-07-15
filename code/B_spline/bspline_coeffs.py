@@ -83,9 +83,14 @@ def bspline_coeffs(sig, knots, order, p=None, tt=None, Rl=None, zl=None, show=Fa
     mse = prd
 
     if show:
+        # ax=plt.gca()
+        plt.cla()
         plt.plot(f, 'b', linewidth=4)
         plt.plot(s, 'r', linewidth=2)
+        plt.pause(0.01)
+        """
         plt.show()
+        """
 
     return c, mse, s, Rll, zll
 

@@ -42,6 +42,7 @@
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 from B_spline.Bspline import Bspline
 
 def calcmat(k, x, t):
@@ -59,7 +60,6 @@ def calcmat(k, x, t):
         """
         Uncomment the following lines for plotting each Bspline
         
-        import matplotlib.pyplot as plt
         plt.plot(np.linspace(x[0], x[-1], 100), Bspline(k - 1, i + 1, tt, np.linspace(x[0], x[-1], 100)))
         plt.draw()
         plt.pause(0.01)

@@ -18,7 +18,7 @@ beats = mat_contents['beats']
 order = 4
 prd_limit = 8.0
 acc = [8, 8]
-show = False  # Displays each step of the optimization.
+show = True  # Displays each step of the optimization.
 
 ## Adaptive representation of a heartbeat in an ECG record. 
 signal = beats[0][0]

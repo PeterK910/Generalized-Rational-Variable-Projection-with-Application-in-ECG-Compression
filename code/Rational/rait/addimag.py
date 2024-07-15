@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def addimag(v):
     """
     ADDIMAG - Calculates the imaginary part of v using FFT.
@@ -22,7 +21,7 @@ def addimag(v):
         raise ValueError("Wrong vector!")
     if np.max(np.imag(v)) != 0:
         raise ValueError("The vector is not real!")
-
+    
     vf = np.fft.fft(v)
     vif = mt_arrange(vf)
     vi = np.fft.ifft(vif)
