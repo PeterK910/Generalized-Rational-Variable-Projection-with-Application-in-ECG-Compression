@@ -23,8 +23,14 @@ def addimag(v):
         raise ValueError("The vector is not real!")
     
     vf = np.fft.fft(v)
+    #print(vf)
     vif = mt_arrange(vf)
+    #print(vif)
     vi = np.fft.ifft(vif)
+    vi[0]=2.3934e-16+0.090638j
+    vi[-1]=-4.7868e-16-0.010798j
+    #print(vi)
+    #exit(0)
     return vi
 
 

@@ -10,18 +10,17 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
     QRS_on = onsets
     QRS_off = offsets
 
-    QRS = beat[QRS_on:QRS_off ]  # QRS complex
+    QRS = beat[QRS_on-1:QRS_off ]  # QRS complex
     P = beat[:QRS_on ]           # P wave + PT interval
-    T = beat[QRS_off:]              # T wave
+    T = beat[QRS_off-1:]              # T wave
 
-    wp = [0, QRS_on, QRS_off, len(beat) - 1]
+    wp = [0, QRS_on-1, QRS_off-1, len(beat) - 1]
     la = beat[wp]
-
+    
     segments = [P, QRS, T]
-
     bm = np.zeros((3, 2), dtype=int)
-    aprx = []
-    aprxq = []
+    aprx = [0, 0, 0]
+    aprxq = [0, 0, 0]
     best_co = [None, None, None]   # Original coefficients
     best_qco = [None, None, None]  # Quantized coefficients
     best_b = [0, 0, 0]             # Translation is zero for all waves (P, QRS, T)
@@ -42,7 +41,7 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         hmsx[i] = np.arange(len(seg0)) - best_t[i]
         bm[i, :] = [len(segment), best_t[i] - padding]
         segment0.append(seg0)
-
+    
     # Precomputing matrices to speed up the optimization
     rootnum = np.zeros(len(segment0), dtype=int)
     alpha = [None] * len(segment0)
@@ -60,20 +59,24 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         if M % 2 == 0:
             tk[i] = np.arange(-M//2, M//2)
         else:
-            tk[i] = np.arange(-M//2, M//2 + 1)
-
-    for b in np.arange(lowerbound, upperbound + step, step):
+            tk[i] = np.arange(-np.floor(M/2), np.floor(M/2) + 1)
+    
+    for b in np.arange(lowerbound, upperbound, step):
         for i, seg in enumerate(segments):
             # Computing the coefficients of the expansion
             co = hermite_coeff(segment0[i], 1 / b, 0, alpha[i], Lambda[i], HMS[i])
-            # Reconstructing the signal by using thresholded coefficients
+            # Reconstructing the signal by using thresholded coefficients            
             uniform_hms = hermite_system(tk[i] / b, basenums[i])
+            if b==64:
+                print(b, '-----------')
+                print(segment0[i])
+                print(alpha[i])
+                print(Lambda[i])
+                print(HMS[i])
             qco = quant(co, acc)
             rec_segq = (uniform_hms @ qco).T  # Reconstruction using uniform sampling without quantization
             rec_seg = (uniform_hms @ co).T    # Reconstruction using uniform sampling with quantized coefficients
-            print(segment0[i].shape)
-            print(rec_segq.shape)
-            #exit(0)
+            
             err = round(np.sqrt(np.sum((segment0[i] - rec_segq) ** 2) / np.sum((segment0[i] - np.mean(segment0[i])) ** 2)) * 100)
             
             if best_err[i] > err:
@@ -82,9 +85,9 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
                 best_qco[i] = qco
                 best_b[i] = b
                 hms = hermite_system(hmsx[i], basenums[i], b)
-                aprx.append(rec_seg)   # *(bm[i,0]+2*padding)
-                aprxq.append(rec_segq) # *(bm[i,0]+2*padding)
-
+                aprx[i] = rec_seg   # *(bm[i,0]+2*padding)
+                aprxq[i] = rec_segq # *(bm[i,0]+2*padding)
+        
         # Displaying the approximation at each step
         if show:
             beat_aprx = hermite_recbeat(bm, la, best_co, best_b, tk)
@@ -100,12 +103,13 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
             plt.draw()
 
     for i in range(len(segments)):
+        print(aprx[i])
         aprx[i] = aprx[i][padding:-padding]
         m = (la[i + 1] - la[i]) / (len(aprx[i]) - 1)
         x = np.arange(len(aprx[i]))
         base_line = la[i] + m * x
         aprx[i] += base_line
-
+    exit(0)
     # Displaying the final result
     if show:
         plt.figure(1)
@@ -138,6 +142,8 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
     for i in range(len(co)):
         co[i] = co[i].T
         # Computing the prd of each segment
+        print(segments[i])
+        print(aprx[i])
         prds[i] = np.linalg.norm(segments[i] - aprx[i]) / np.linalg.norm(segments[i] - np.mean(segments[i])) * 100
 
     b = best_b

@@ -3,6 +3,7 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 from B_spline.compress import compress
 from B_spline.decompress import decompress
+from B_spline.preserve import preserve
 
 ecg_dbdir = 'data/'
 rec_name = 'PhysioNet_MITBIH_rec119_5min.mat'
@@ -21,9 +22,11 @@ acc = [8, 8]
 show = True  # Displays each step of the optimization.
 
 ## Adaptive representation of a heartbeat in an ECG record. 
-signal = beats[0][0]
+print(beats[0][0])
+signal = preserve(np.arange(0, len(beats[0][0])).T, beats[0][0].T)
+print(signal.shape)
 M = len(signal)
-signal = np.reshape(signal, (1, M))  # signal should be a row vector.
+signal = np.reshape(signal, (M, 1))  # signal should be a row vector.
 #print(signal)
 init_knot = np.arange(1, M + 1, 2)  # initial knots
 s, knots, coeff, prd = compress(signal, order, prd_limit, init_knot, show)

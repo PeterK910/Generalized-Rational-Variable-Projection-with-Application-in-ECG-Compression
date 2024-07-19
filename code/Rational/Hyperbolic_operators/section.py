@@ -24,4 +24,4 @@ def section(w1, w2, resolution, draw, color=[0, 0, 0], style="-"):
             plt.plot(w[-1].real, w[-1].imag, color=color, marker=".", markersize=25)
         plt.show()
 
-    return w, pole, eps.real, p
+    return w, pole, eps, p

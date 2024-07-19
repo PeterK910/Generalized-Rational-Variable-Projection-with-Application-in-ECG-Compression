@@ -38,6 +38,11 @@ normsig, baseline = norm_sig(signal) # normalizing the baseline of the signal.
 #print(baseline)
 p, c, m, dbest, l, bl, prd = hyp_mdpso(normsig, ps_file, swarm, alpha, iterno, acc, show)
 # Reconstructing the signal
+#p=np.array([0.35714-0.61859j,0.21429-0.37115j,0.28571-0.49487j])
+#c=np.array([[-0.34356-1.0226j,0.75614-0.7016j,-0.91971+0.50085j,0.17301-0.0086347j,0.39597+0.44869j,-0.0053002-0.21253j,0.22063-0.30687j,-0.0021594+0.086587j,-0.27377-0.099644j,0.013789+0.01918j,0.027346+0.15509j,0.049094-0.061562j,0.070075+0.010562j,-0.094324-0.039761j,0.0042652+0.015159j,-0.010663+0.037899j]])
+#m=np.array([4,6,6])
+print('p', p)
+print('c', c)
 mpoles = periodize_poles(multiply_poles(p, m), 1)
 mpoles = np.reshape(mpoles, (1, len(mpoles)))
 #print(mpoles.shape)
@@ -54,7 +59,7 @@ print(f'Inverse pole configuration in the best dimension: m=({", ".join(map(str,
 fig, axes = plt.subplots(1, 2, figsize=(13, 6))
 draw_unitcircle(p,m)
 
-x = np.arange(1, M + 1)
+x = np.arange(0, M)
 
 axes[0].set_title('Original Signal vs. Approximation')
 axes[0].plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
