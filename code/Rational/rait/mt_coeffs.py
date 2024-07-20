@@ -28,10 +28,7 @@ def mt_coeffs(v, poles):
         raise ValueError("Bad poles!")
 
     mts = mt_system(mv, poles)
-    co = (np.matmul(mts, v.T) / mv).T
-
-    # in matlab, the imaginary part did not need to be negated.
-    co = co.real + (-1) * co.imag * 1j
+    co = (np.matmul(mts, v.T.conj()) / mv).T.conj()    
     err = np.linalg.norm(np.matmul(co, mts) - v)
 
     return co, err
