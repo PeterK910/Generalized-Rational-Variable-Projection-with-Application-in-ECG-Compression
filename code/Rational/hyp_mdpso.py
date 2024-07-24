@@ -282,7 +282,9 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
     VDmin = 0
     VDmax = 3
     maxPD = 8 # Maximal number of particles in each dimension.
-    fig, ax=plt.subplots(1, 2, figsize=(13, 6))
+    
+    if show:
+        fig, ax=plt.subplots(1, 2, figsize=(13, 6))
 
     maxpn = len(ps[-1][0][0:-1]) # Maximal number of poles in the highest dimension.
  
@@ -628,7 +630,7 @@ def hyp_mdpso(f, ps_name, s, alpha = 0.5, iterno = 50, eps = None, show = False,
             #plt.plot(tt, np.real(hf), 'b', linewidth=4)
             ax[1].plot(tt, np.real(hf), 'b', linewidth=3)
 
-            # plt.plot(tt[:len_f], np.real(seg) + base_line, 'g', linewidth=3)
+            #ax[1].plot(tt[:len_f], np.real(seg) + base_line, 'g', linewidth=3)
             # plt.plot(tt[:len_f], np.real(fs) + base_line, 'r', linewidth=3)
             ax[1].plot(tt[:len_f], np.real(fs_r)[0] + base_line, 'r', linewidth=2)
             #plt.plot(tt[:len_f], np.real(fs_r)[0] + base_line, 'r', linewidth=1)

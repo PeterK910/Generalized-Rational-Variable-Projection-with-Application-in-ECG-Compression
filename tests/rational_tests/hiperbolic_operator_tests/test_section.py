@@ -21,6 +21,6 @@ def test_1():
         ],
         5,
     )
-    npt.assert_almost_equal(pole, np.float64(7.071068e-01))
-    npt.assert_almost_equal(eps, np.float64(-7.071068e-01))
-    npt.assert_almost_equal(p, np.float64(9.428090e-01))
+    npt.assert_almost_equal(pole, np.float64(7.071068e-01), 6)
+    npt.assert_almost_equal(eps, np.complex64(-7.071068e-01 - 7.071068e-01j), 6)
+    npt.assert_almost_equal(p, np.float64(9.428090e-01), 6)

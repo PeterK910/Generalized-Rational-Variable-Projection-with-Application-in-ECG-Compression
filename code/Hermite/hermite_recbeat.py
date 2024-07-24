@@ -55,7 +55,7 @@ def hermite_recbeat(bm, la, co, b, tk=None):
     # Baseline or trend reconstruction
     sig = []
     for i in range(len(la) - 1):
-        print(aprx[i])
+        #print(aprx[i])
         m = (la[i + 1] - la[i]) / (len(aprx[i][0]) - 1)
         x = np.arange(len(aprx[i][0]))
         base_line = la[i] + m * x

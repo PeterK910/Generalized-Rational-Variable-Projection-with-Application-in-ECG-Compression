@@ -54,7 +54,7 @@ def predict_mse(f, g, c, k, t, pp):
     tt = np.concatenate([np.full(k - 1, t[0]), t, np.full(k - 1, t[-1])])
     rrho = np.concatenate([tt[:k - 1 + p], tt[k + p:]])
 
-    alpha = (t[pp-1] - rrho[p:p + k - 1]) / (rrho[p + k-1:p + 2 * (k - 1)] - rrho[p:p + k - 1])
+    alpha = (t[p] - rrho[p:p + k - 1]) / (rrho[p + k-1:p + 2 * (k - 1)] - rrho[p:p + k - 1])
 
     d = np.zeros(m + k - 1)
     d[:p ] = c[:p ]

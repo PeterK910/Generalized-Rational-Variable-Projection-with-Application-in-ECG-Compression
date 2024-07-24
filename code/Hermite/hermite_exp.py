@@ -1,5 +1,60 @@
+"""
+Computing the Hermite expansion of a heart beat.
+hermite_exp - Segmenting ECG signals into heart beats.
+
+Usage: 
+    [aprx,bm,la,co,b,prds]=hermite_exp(beat,onsets,offsets,basenums,acc,opt,show)
+
+Input parameters:
+    beat     : samples of the heart beat that should be compressed  
+    onsets   : onset index of the QRS complex of the heart beat 
+    offsets  : offset index of the QRS complex of the heart beat 
+    basenums : number of terms in the expansions related to [P,QRS,T] waves.
+            For instance basenums=[2,7,6] means that we use 2,7,6 
+            coefficients for representing the P,QRS,T wave, respectively.
+    acc      : number of bits that is used for quantizing the parameters: coefficients, dilations, translations, etc.
+    opt      : parameters for the optimization, which is an iterative process. 
+            Namely, we try all the values in the interval [opt.lowerbound,opt.upperbound].
+            The distance of each value in this discrete interval is opt.step. 
+    show     : displaying the results at each step of the optimization 
+
+Output parameters:
+    aprx : aprx(i) contains the approximation of the ith section
+    bm   :  The heart beat is segmented into different sections (or waves):
+        - 'bm(i,1)' contains the length of the ith section
+        - 'bm(i,2)' contains the translation parameter of the Hermite system of ith section
+    la   : contains the boundary values of each section
+    co   : it is a cell array, co{i} contains the coefficients of the ith section 
+    b    : 'b(i)' contains the dilation parameter of the Hermite system of ith section
+    prds :  prd(i) contains the error of the approximation of the ith section
+            For ECG: prds(1),prds(2),prds(3) corresponds to the prd of the P,QRS,T waves, respectively.
+
+NOTE: WFDB PhysioToolkit package should be loaded in MATLAB!!!
+
+Copyright (c) 2017, Péter Kovács kovika@inf.elte.hu>  
+Eötvös Loránd University, Budapest, Hungary, 2017.   
+
+This implementation is based on the following papers:
+
+[1] R. Jane, S. Olmos, P. Laguna, P. Caminal, 
+    Adaptive Hermite models for ECG data compression: performance and evaluation with automatic wave detection, 
+    Proceedings of Computers in Cardiology, 1993, pp. 389-392. 
+
+[2] A. Sandryhaila, S. Saba, M. Puschel, J. Kovacevic, 
+    Efficient Compression of QRS Complexes Using Hermite Expansion, 
+    IEEE Transactions on Signal Processing, vol. 60, no. 2, 2012, pp. 947-955. 
+
+[3] T. Dózsa, P. Kovács, 
+    ECG signal compression using adaptive Hermite functions, 
+    Advances in Intelligent Systems and Computing, vol. 399, 2015, pp. 245-254. 
+
+"""
+
+
+import math
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.sparse import csr_matrix
 from Hermite.hermite_roots import hermite_roots
 from Hermite.hermite_coeff import hermite_coeff
 from Hermite.hermite_system import hermite_system
@@ -14,7 +69,7 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
     P = beat[:QRS_on ]           # P wave + PT interval
     T = beat[QRS_off-1:]              # T wave
 
-    wp = [0, QRS_on-1, QRS_off-1, len(beat) - 1]
+    wp = [0, QRS_on-1, QRS_off-1, len(beat) - 1] #matlabon 1-el nagyobbak
     la = beat[wp]
     
     segments = [P, QRS, T]
@@ -37,11 +92,11 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         base_line = segment[0] + m * x
         seg0 = segment - base_line
         seg0 = np.concatenate(([0] * padding, seg0, [0] * padding))
-        best_t.append(len(seg0) // 2)
-        hmsx[i] = np.arange(len(seg0)) - best_t[i]
+        best_t.append(np.ceil(len(seg0) / 2))
+        hmsx[i] = np.arange(len(seg0)) - best_t[i] + 1
         bm[i, :] = [len(segment), best_t[i] - padding]
         segment0.append(seg0)
-    
+
     # Precomputing matrices to speed up the optimization
     rootnum = np.zeros(len(segment0), dtype=int)
     alpha = [None] * len(segment0)
@@ -53,8 +108,8 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         rootnum[i] = len(seg0)
         alpha[i] = hermite_roots(rootnum[i])
         hms = hermite_system(alpha[i], len(alpha[i]))
-        HMS[i] = hms[:, :basenums[i]]
-        Lambda[i] = hms @ hms.T
+        HMS[i] = hms[:, :basenums[i]] #matlabon több benne a nulla
+        Lambda[i] = np.matmul(hms, hms.T.conj()) #matlabon több benne a nulla
         M = len(seg0)
         if M % 2 == 0:
             tk[i] = np.arange(-M//2, M//2)
@@ -62,17 +117,24 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
             tk[i] = np.arange(-np.floor(M/2), np.floor(M/2) + 1)
     
     for b in np.arange(lowerbound, upperbound, step):
+        print(b, "------------")
+        #print(Lambda[0])
+       # if b==6.3:
+        #    exit(0)
         for i, seg in enumerate(segments):
             # Computing the coefficients of the expansion
             co = hermite_coeff(segment0[i], 1 / b, 0, alpha[i], Lambda[i], HMS[i])
+            print(co)
             # Reconstructing the signal by using thresholded coefficients            
             uniform_hms = hermite_system(tk[i] / b, basenums[i])
+            """
             if b==64:
                 print(b, '-----------')
                 print(segment0[i])
                 print(alpha[i])
                 print(Lambda[i])
                 print(HMS[i])
+            """
             qco = quant(co, acc)
             rec_segq = (uniform_hms @ qco).T  # Reconstruction using uniform sampling without quantization
             rec_seg = (uniform_hms @ co).T    # Reconstruction using uniform sampling with quantized coefficients
@@ -101,15 +163,17 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
             plt.legend(legend)
             plt.axis([0, len(beat), np.min(beat) - 0.05, np.max(beat) + 0.05])
             plt.draw()
-
+    #print(best_err)
+    #exit(0)
     for i in range(len(segments)):
-        print(aprx[i])
-        aprx[i] = aprx[i][padding:-padding]
+        #print(aprx[i].shape)
+        if padding>0:
+            aprx[i] = aprx[i][padding:-padding]
         m = (la[i + 1] - la[i]) / (len(aprx[i]) - 1)
         x = np.arange(len(aprx[i]))
         base_line = la[i] + m * x
         aprx[i] += base_line
-    exit(0)
+#    exit(0)
     # Displaying the final result
     if show:
         plt.figure(1)
@@ -142,12 +206,14 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
     for i in range(len(co)):
         co[i] = co[i].T
         # Computing the prd of each segment
-        print(segments[i])
-        print(aprx[i])
+        #print(segments[i])
+        #print(aprx[i])
         prds[i] = np.linalg.norm(segments[i] - aprx[i]) / np.linalg.norm(segments[i] - np.mean(segments[i])) * 100
 
     b = best_b
-    aprx = hermite_recbeat(bm, la, best_qco, b, tk)
+    best_qco_sparse = [csr_matrix(c).T for c in best_qco]
+    tk_sparse = [csr_matrix(t).T for t in tk]
+    aprx = hermite_recbeat(bm, la, best_qco_sparse, b, tk_sparse)
 
     return aprx, bm, la, co, b, prds
 

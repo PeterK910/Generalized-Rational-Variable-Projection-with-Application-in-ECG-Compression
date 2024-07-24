@@ -59,14 +59,28 @@ from B_spline.Bspline import Bspline
 
 
 def bspline_coeffs(sig, knots, order, p=None, tt=None, Rl=None, zl=None, show=False):
-    x = np.arange(1, len(sig) + 1)
+    x = np.arange(0, len(sig) )
+    #x = np.arange(1, len(sig) +1)
     f = preserve(x, sig)
     y = preserve(x, f)
 
     if p is None:
+        """
+        E = calcmat(order, x, knots)
+        Qll_eco, Rll_eco = qr(E, mode='economic')
+        Qll, Rll = qr(E, mode='full')
+        #print(Qll.T)
+        #print(Rll)
+        zll_eco = np.matmul(Qll_eco.T, y[1:-1])
+        zll = np.matmul(Qll.T, y[1:-1])
+        #print(zll)
+        c = solve_triangular(Rll_eco, zll_eco)
+        #print(c)
+        show = False
+        """
         E = calcmat(order, x, knots)
         Qll, Rll = qr(E, mode='economic')
-        zll = Qll.T @ y[1:-1]
+        zll = np.matmul(Qll.T, y[1:-1])
         c = solve_triangular(Rll, zll)
         show = False
     else:

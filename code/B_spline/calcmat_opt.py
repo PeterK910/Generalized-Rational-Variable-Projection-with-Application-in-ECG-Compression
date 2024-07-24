@@ -37,7 +37,6 @@ from scipy.sparse import csr_matrix
 
 def calcmat_opt(k, x, t, pp, El=None):
     m = len(t) - 2
-    #n = len(x) - 2
     p = pp - 1
     if p < 0 or p > m:
         raise ValueError('The first and the last knot must be kept!')
