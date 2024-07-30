@@ -17,6 +17,11 @@ def subsample(sample, tk, xk):
         y : the interpolated value at the point(s) xk according to sample
     """
 
-    f=make_interp_spline(tk, sample)
-    return f(xk)
+    spline = make_interp_spline(tk, sample, k=3)
+    y = spline(xk)
+    
+    # Set out-of-bounds values to 0, similar to MATLAB's 'spline', 0 behavior
+    y[np.logical_or(xk < tk[0], xk > tk[-1])] = 0
+    
+    return y
     

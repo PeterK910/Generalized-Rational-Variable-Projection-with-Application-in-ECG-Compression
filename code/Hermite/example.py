@@ -47,7 +47,7 @@ plt.savefig('results/hermite_signal_approx.png')
 
 
 ## Displaying statistical informations.
-print('------------------- B-spline approximation -------------------')
+print('------------------- Hermite approximation -------------------')
 print(f'The approximation error in the sense of PRD: {prd:.2f} %')
 print(f'Number of segments: {len(basenums)}')
 print(f'Number of coefficients: {sum(basenums)}')

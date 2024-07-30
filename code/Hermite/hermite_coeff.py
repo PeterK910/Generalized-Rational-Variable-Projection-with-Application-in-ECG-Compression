@@ -53,6 +53,6 @@ def hermite_coeff(signal, dilat, trans, alpha=None, Lambda=None, HMS=None):
     s = subsample(s, dilat * tk, alpha)  # dilation
     
     # Computing the Hermite coefficients
-    co = HMS.T @ solve(Lambda, s)
+    co = np.matmul(HMS.T, solve(Lambda, s.T))
     
     return co

@@ -108,33 +108,20 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         rootnum[i] = len(seg0)
         alpha[i] = hermite_roots(rootnum[i])
         hms = hermite_system(alpha[i], len(alpha[i]))
-        HMS[i] = hms[:, :basenums[i]] #matlabon több benne a nulla
-        Lambda[i] = np.matmul(hms, hms.T.conj()) #matlabon több benne a nulla
+        HMS[i] = hms[:, :basenums[i]] 
+        Lambda[i] = np.matmul(hms, hms.T) 
         M = len(seg0)
         if M % 2 == 0:
             tk[i] = np.arange(-M//2, M//2)
         else:
             tk[i] = np.arange(-np.floor(M/2), np.floor(M/2) + 1)
     
-    for b in np.arange(lowerbound, upperbound, step):
-        print(b, "------------")
-        #print(Lambda[0])
-       # if b==6.3:
-        #    exit(0)
+    for b in np.arange(lowerbound, upperbound, step):    
         for i, seg in enumerate(segments):
             # Computing the coefficients of the expansion
             co = hermite_coeff(segment0[i], 1 / b, 0, alpha[i], Lambda[i], HMS[i])
-            print(co)
             # Reconstructing the signal by using thresholded coefficients            
             uniform_hms = hermite_system(tk[i] / b, basenums[i])
-            """
-            if b==64:
-                print(b, '-----------')
-                print(segment0[i])
-                print(alpha[i])
-                print(Lambda[i])
-                print(HMS[i])
-            """
             qco = quant(co, acc)
             rec_segq = (uniform_hms @ qco).T  # Reconstruction using uniform sampling without quantization
             rec_seg = (uniform_hms @ co).T    # Reconstruction using uniform sampling with quantized coefficients
@@ -152,39 +139,42 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         
         # Displaying the approximation at each step
         if show:
-            beat_aprx = hermite_recbeat(bm, la, best_co, best_b, tk)
-            beat_aprxq = hermite_recbeat(bm, la, best_qco, best_b, tk)
+            best_co_sparse = [csr_matrix(c).T for c in best_co]
+            best_qco_sparse = [csr_matrix(c).T for c in best_qco]
+            tk_sparse = [csr_matrix(t).T for t in tk]
+
+            beat_aprx = hermite_recbeat(bm, la, best_co_sparse, best_b, tk_sparse)
+            beat_aprxq = hermite_recbeat(bm, la, best_qco_sparse, best_b, tk_sparse)
+            plt.cla()
             plt.plot(beat, 'b', linewidth=2)
             plt.plot(beat_aprxq, 'r', linewidth=1)
-            plt.show()
             prd = np.sqrt(np.sum((beat - beat_aprx) ** 2) / np.sum((beat - np.mean(beat)) ** 2)) * 100
             prdq = np.sqrt(np.sum((beat - beat_aprxq) ** 2) / np.sum((beat - np.mean(beat)) ** 2)) * 100
             legend = ['Original signal', f'Apprx. (PRD: {prdq:.2f} %)']
             plt.legend(legend)
             plt.axis([0, len(beat), np.min(beat) - 0.05, np.max(beat) + 0.05])
             plt.draw()
-    #print(best_err)
-    #exit(0)
+            plt.pause(0.05)
+    
     for i in range(len(segments)):
-        #print(aprx[i].shape)
         if padding>0:
             aprx[i] = aprx[i][padding:-padding]
         m = (la[i + 1] - la[i]) / (len(aprx[i]) - 1)
         x = np.arange(len(aprx[i]))
         base_line = la[i] + m * x
         aprx[i] += base_line
-#    exit(0)
+
     # Displaying the final result
     if show:
         plt.figure(1)
         plt.plot(beat)
-        plt.plot(np.arange(QRS_on, QRS_off + 1), QRS, 'r', linewidth=2)
-        plt.plot(np.arange(1, QRS_on), P[:-1], 'g', linewidth=2)
-        plt.plot(np.arange(QRS_off + 1, len(beat) + 1), T[1:], 'k', linewidth=2)
+        plt.plot(np.arange(QRS_on-1, QRS_off ), QRS, 'r', linewidth=2)
+        plt.plot(np.arange(QRS_on-1), P[:-1], 'g', linewidth=2)
+        plt.plot(np.arange(QRS_off , len(beat) ), T[1:], 'k', linewidth=2)
         plt.plot(wp, la, 'r.')
         plt.plot([QRS_on, QRS_off], beat[[QRS_on, QRS_off]], 'g.')
         plt.show()
-
+    """
         tt = np.round([(QRS_on + 1) / 2, (QRS_on + QRS_off) / 2, (QRS_off + len(beat)) / 2]).astype(int)
         beat_aprx = np.concatenate([aprx[0][:-1], aprx[1][:-1], aprx[2]])
         plt.plot(beat, 'b', linewidth=2)
@@ -200,14 +190,13 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
         plt.axis('tight')
         plt.grid(True)
         plt.show()
+    """
 
     co = best_qco
     prds = np.zeros(len(co))
     for i in range(len(co)):
         co[i] = co[i].T
         # Computing the prd of each segment
-        #print(segments[i])
-        #print(aprx[i])
         prds[i] = np.linalg.norm(segments[i] - aprx[i]) / np.linalg.norm(segments[i] - np.mean(segments[i])) * 100
 
     b = best_b

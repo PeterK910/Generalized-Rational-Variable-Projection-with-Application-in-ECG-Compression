@@ -18,24 +18,12 @@ def hermite_system(alpha, k, b=1):
     return Phi
 
 def hermite(n, x, b):
-    """
-    Compute the first 'n' Hermite functions at points 'x' with dilation parameter 'b'.
-
-    Parameters:
-    - n : number of Hermite functions to compute
-    - x : points at which to compute the Hermite functions
-    - b : dilation parameter
-
-    Returns:
-    - H : matrix where each column contains the values of the Hermite function at points 'x'
-    """
     H = np.zeros((x.shape[0], n))
     x = np.reshape(x, (x.shape[0], 1))
     xx = np.reshape(x / b, (x.shape[0], 1))
     w = np.exp(-x**2 / (2 * b**2))  # weight function
     H[:, 0] = w[:, 0]               # zero order Hermite polynomial
-    if n > 1:
-        H[:, 1] = 2 * xx[:, 0] * w[:, 0] / np.sqrt(2)  # first order Hermite polynomial
+    H[:, 1] = 2 * xx[:, 0] * w[:, 0] / np.sqrt(2)  # first order Hermite polynomial
 
     # Hermite polynomials by recursion
     for i in range(2, n):
