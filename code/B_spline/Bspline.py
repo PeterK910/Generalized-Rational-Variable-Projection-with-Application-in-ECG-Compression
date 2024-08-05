@@ -1,5 +1,5 @@
 """
-    Last Modified: September 18, 2017.
+    Last Modified: August 18, 2024.
     Version 1.0.
 
     Bspline - Computes the values of B-spline curves by 

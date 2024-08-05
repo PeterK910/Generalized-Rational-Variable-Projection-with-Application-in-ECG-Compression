@@ -1,5 +1,5 @@
 """
-    Last Modified: September 18, 2017.
+    Last Modified: August 05, 2024.
     Version 1.0.
     
     solve_opt - Auxiliary function for speeding up the computation of the least 
@@ -33,6 +33,7 @@
 import numpy as np
 from scipy.linalg import solve_triangular
 
+
 def planerot(x):
     if x[1] != 0:
         r = np.hypot(x[0], x[1])
@@ -45,8 +46,9 @@ def planerot(x):
         y = x
     return G, y
 
+
 def solve_opt(Rl, zl, B, b, k, p):
-    Rll = np.dot(Rl, B)
+    Rll = np.matmul(Rl, B)
     zll = np.copy(zl)
     _, n = Rll.shape
 
@@ -56,27 +58,27 @@ def solve_opt(Rl, zl, B, b, k, p):
         ind = p - 2
 
     for i in range(ind, n - k):
-        G, y = planerot(Rll[i:i+2, i])
+        G, y = planerot(Rll[i : i + 2, i])
         # Rotating vector 'zll'.
-        zll[i:i+2] = np.dot(G, zll[i:i+2])
+        zll[i : i + 2] = np.matmul(G, zll[i : i + 2])
         # Rotating matrix 'Rll'.
-        Rll[i:i+2, i] = y
+        Rll[i : i + 2, i] = y
         for j in range(k - 1):
-            r = np.dot(G, Rll[i:i+2, i + j + 1])
-            Rll[i:i+2, i + j + 1] = r
+            r = np.matmul(G, Rll[i : i + 2, i + j + 1])
+            Rll[i : i + 2, i + j + 1] = r
 
     if n - k <= 0:
         ind = 0
     else:
         ind = n - k
-        
+
     for i in range(ind, n):
-        G, y = planerot(Rll[i:i+2, i])
-        zll[i:i+2] = np.dot(G, zll[i:i+2])
-        Rll[i:i+2, i] = y
+        G, y = planerot(Rll[i : i + 2, i])
+        zll[i : i + 2] = np.matmul(G, zll[i : i + 2])
+        Rll[i : i + 2, i] = y
         for j in range(n - i - 1):
-            Rll[i:i+2, i + j+1] = np.matmul(G, Rll[i:i+2, i+j+1])
+            Rll[i : i + 2, i + j + 1] = np.matmul(G, Rll[i : i + 2, i + j + 1])
 
-    c = solve_triangular(Rll[:n, :n], zll[:n], lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True)
+    c = solve_triangular(Rll[:n, :n], zll[:n], lower=False, unit_diagonal=False, overwrite_b=False, check_finite=True,)
+
     return c, Rll, zll
-

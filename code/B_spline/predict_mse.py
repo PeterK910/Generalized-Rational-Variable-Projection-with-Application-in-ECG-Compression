@@ -1,5 +1,5 @@
 """
-    Last Modified: September 18, 2017.
+    Last Modified: August 05, 2024.
     Version 1.0.
 
     predict_mse - Predicts the mean square error (MSE) of a removed knot.
@@ -44,41 +44,41 @@
 from B_spline.Bspline import Bspline
 import numpy as np
 
+
 def predict_mse(f, g, c, k, t, pp):
     x = np.arange(1, len(f) + 1)
     m = len(t) - 2
     p = pp - 1
     if p < 0 or p > m:
-        raise ValueError('The first and the last knot must be kept!')
+        raise ValueError("The first and the last knot must be kept!")
     N = len(f)
     tt = np.concatenate([np.full(k - 1, t[0]), t, np.full(k - 1, t[-1])])
-    rrho = np.concatenate([tt[:k - 1 + p], tt[k + p:]])
+    rrho = np.concatenate([tt[: k - 1 + p], tt[k + p :]])
 
-    alpha = (t[p] - rrho[p:p + k - 1]) / (rrho[p + k-1:p + 2 * (k - 1)] - rrho[p:p + k - 1])
-
-    d = np.zeros(m + k - 1)
-    d[:p ] = c[:p ]
-    d[p + k - 2:] = c[p + k-1:]
-
-    for i in range(p + 1, p + k - 1):
-        d[i-1] = (c[i-1] - (1 - alpha[i - p-1]) * d[i - 2]) / alpha[i - p-1]
-
-    dd = alpha[-1] * d[p - 2 + k] + (1 - alpha[-1]) * d[p - 2 + k - 1]
-    
-    dzeta1 = (f - g) + (c[p - 2 + k] - dd) * Bspline(k - 1, p - 1 + k, tt, x)
-    dzeta1 = np.sum(dzeta1 ** 2) / N
+    alpha = (t[p] - rrho[p : p + k - 1]) / (rrho[p + k - 1 : p + 2 * (k - 1)] - rrho[p : p + k - 1])
 
     d = np.zeros(m + k - 1)
     d[:p] = c[:p]
-    d[p + k - 2:] = c[p + k-1:]
-    for i in range(p + k -2, p, -1):
+    d[p + k - 2 :] = c[p + k - 1 :]
+
+    for i in range(p + 1, p + k - 1):
+        d[i - 1] = (c[i - 1] - (1 - alpha[i - p - 1]) * d[i - 2]) / alpha[i - p - 1]
+
+    dd = alpha[-1] * d[p - 2 + k] + (1 - alpha[-1]) * d[p - 2 + k - 1]
+
+    dzeta1 = (f - g) + (c[p - 2 + k] - dd) * Bspline(k - 1, p - 1 + k, tt, x)
+    dzeta1 = np.sum(dzeta1**2) / N
+
+    d = np.zeros(m + k - 1)
+    d[:p] = c[:p]
+    d[p + k - 2 :] = c[p + k - 1 :]
+    for i in range(p + k - 2, p, -1):
         d[i - 1] = (c[i] - alpha[i - p] * d[i]) / (1 - alpha[i - p])
 
-    dd = alpha[0] * d[p ] + (1 - alpha[0]) * d[p-1]
+    dd = alpha[0] * d[p] + (1 - alpha[0]) * d[p - 1]
 
-    dzeta2 = (f - g) + (c[p ] - dd) * Bspline(k - 1, p + 1, tt, x)
-    dzeta2 = np.sum(dzeta2 ** 2) / N
+    dzeta2 = (f - g) + (c[p] - dd) * Bspline(k - 1, p + 1, tt, x)
+    dzeta2 = np.sum(dzeta2**2) / N
 
     wp = min(dzeta1, dzeta2)
     return wp
-
