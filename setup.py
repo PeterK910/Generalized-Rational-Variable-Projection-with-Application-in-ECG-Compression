@@ -16,7 +16,6 @@ if __name__ == "__main__":
             'testing': [
                 'pytest>=6.0',
                 'pytest-cov>=2.0',
-                'mypy>=0.910',
                 'tox>=3.24',
             ],
         },
