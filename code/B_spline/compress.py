@@ -47,7 +47,6 @@ SOFTWARE.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as FuncAnimation
 
 from B_spline.predict_mse import predict_mse
 from B_spline.bspline_coeffs import bspline_coeffs

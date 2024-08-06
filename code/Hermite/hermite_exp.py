@@ -51,7 +51,6 @@ This implementation is based on the following papers:
 """
 
 
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
@@ -65,11 +64,11 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
     QRS_on = onsets
     QRS_off = offsets
 
-    QRS = beat[QRS_on-1:QRS_off ]  # QRS complex
-    P = beat[:QRS_on ]           # P wave + PT interval
-    T = beat[QRS_off-1:]              # T wave
+    QRS = beat[QRS_on-1:QRS_off ] # QRS complex
+    P = beat[:QRS_on ]            # P wave + PT interval
+    T = beat[QRS_off-1:]          # T wave
 
-    wp = [0, QRS_on-1, QRS_off-1, len(beat) - 1] #matlabon 1-el nagyobbak
+    wp = [0, QRS_on-1, QRS_off-1, len(beat) - 1]
     la = beat[wp]
     
     segments = [P, QRS, T]
@@ -134,8 +133,8 @@ def hermite_exp(beat, onsets, offsets, basenums, acc, lowerbound, upperbound, st
                 best_qco[i] = qco
                 best_b[i] = b
                 hms = hermite_system(hmsx[i], basenums[i], b)
-                aprx[i] = rec_seg   # *(bm[i,0]+2*padding)
-                aprxq[i] = rec_segq # *(bm[i,0]+2*padding)
+                aprx[i] = rec_seg
+                aprxq[i] = rec_segq
         
         # Displaying the approximation at each step
         if show:

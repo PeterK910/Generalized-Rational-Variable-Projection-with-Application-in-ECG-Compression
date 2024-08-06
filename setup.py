@@ -9,6 +9,7 @@ if __name__ == "__main__":
         install_requires=[
             'numpy',
             'matplotlib',
+            'scipy',
             # Add other dependencies as needed
     ],
     extras_require={
@@ -16,7 +17,6 @@ if __name__ == "__main__":
                 'pytest>=6.0',
                 'pytest-cov>=2.0',
                 'mypy>=0.910',
-                'flake8>=3.9',
                 'tox>=3.24',
             ],
         },

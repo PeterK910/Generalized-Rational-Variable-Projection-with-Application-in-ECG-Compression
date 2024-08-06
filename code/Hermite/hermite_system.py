@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.special import hermite as scipy_hermite
+
 
 def hermite_system(alpha, k, b=1):
     """

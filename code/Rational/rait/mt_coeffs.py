@@ -28,7 +28,7 @@ def mt_coeffs(v, poles):
         raise ValueError("Bad poles!")
 
     mts = mt_system(mv, poles)
-    co = (np.matmul(mts, v.T.conj()) / mv).T.conj()    
+    co = (np.matmul(mts, v.T.conj()) / mv).T.conj()
     err = np.linalg.norm(np.matmul(co, mts) - v)
 
     return co, err
