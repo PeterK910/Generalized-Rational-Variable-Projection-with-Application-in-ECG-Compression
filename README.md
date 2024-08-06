@@ -1,4 +1,5 @@
 # Generalized Rational Variable Projection With Application in ECG Compression [1]
+![Tests](https://github.com/Denotron/Generalized-Rational-Variable-Projection-with-Application-in-ECG-Compression/actions/workflows/tests.yml/badge.svg)
 ## Structure of the Python Toolbox
 ```
 / [root]
