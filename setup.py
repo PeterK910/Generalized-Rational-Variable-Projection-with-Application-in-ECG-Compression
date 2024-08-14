@@ -10,6 +10,7 @@ if __name__ == "__main__":
             'numpy',
             'matplotlib',
             'scipy',
+            'PyWavelets',
             # Add other dependencies as needed
     ],
     extras_require={
