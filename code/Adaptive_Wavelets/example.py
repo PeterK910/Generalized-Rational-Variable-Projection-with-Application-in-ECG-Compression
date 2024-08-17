@@ -19,17 +19,15 @@ outfile = 'results/compressed_signal_awt'
 acc = np.array([8])  # Use 8 bits for quantizing the compressed data
 PRD_limit = 10  # PRD limit for approximation
 blocksize = 1024  # Segment size
-#blocksize = 475  # Segment size
 depth = 7  # Depth of wavelet tree
 show = False  # Control for displaying optimization steps
 
 # Adaptive representation of a heartbeat in an ECG record
-k = 0  # Example heartbeat index, adjust as needed
+k = 0  # Example heartbeat index
 signal = ecg[(k)*blocksize:(k+1)*blocksize]
-#signal = beats[0][0]
 M = len(signal)
-signal = np.reshape(signal, (M,))  # Signal should be a column vector
-#print(signal[0])
+signal = np.reshape(signal, (M,))
+
 # Adaptive Wavelet Transform (AWT)
 prd, bits, ecgsig = compress_awt(signal, outfile, acc, blocksize, depth, PRD_limit, show)
 aprx, C, L, thetas = decompress_awt(outfile, acc)
@@ -47,6 +45,7 @@ plt.gca().set_aspect("auto", adjustable="box")
 plt.plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
 plt.plot(x, aprx, 'r', label='Approximation', linewidth=2)
 plt.grid(True)
+plt.legend()
 
 # Save the resulting plot to a PNG file
 

@@ -1,9 +1,11 @@
 import numpy as np
 
 def genfilt6(theta1, theta2):
-    # length 6 orthogonal scaling filter as a function of 2 angles.
-    # Peter Kovacs, 2017
-    # translated to python in 2024
+    """
+    length 6 orthogonal scaling filter as a function of 2 angles.
+    Peter Kovacs, 2017
+    translated to python in 2024
+    """
 
     # One can get back db3 filter coefficients by using:
     # theta1=1.35980373244182; theta2=-0.78210638474440

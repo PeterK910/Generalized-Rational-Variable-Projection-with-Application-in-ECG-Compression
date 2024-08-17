@@ -3,7 +3,7 @@ import pywt
 
 # NOTE
 # The functions below have been translated from MATLAB's own factory functions,
-# and have not been under rigorous testing!
+# and have not been under rigorous testing to ensure they work outside the demands of this project!
 
 def wavedec(x, n, IN3, IN4=None):
     """
@@ -493,12 +493,12 @@ def dyadup(x, evenodd=1, dim='c', evenLEN=False):
     Y = DYADUP(X,EVENODD) is equivalent to
     Y = DYADUP(X,EVENODD,'c') 
 
-            |1 2|                              |0 1 0 2 0|
+             |1 2|                              |0 1 0 2 0|
     When X = |3 4|  we obtain:  DYADUP(X,'c') = |0 3 0 4 0|
 
-                        |1 2|                      |1 0 2|
+                      |1 2|                      |1 0 2|
     DYADUP(X,'r',0) = |0 0|  , DYADUP(X,'m',0) = |0 0 0|
-                        |3 4|                      |3 0 4|
+                      |3 4|                      |3 0 4|
 
     See also DYADDOWN.
     

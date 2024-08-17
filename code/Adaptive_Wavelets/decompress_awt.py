@@ -47,37 +47,33 @@ def decompress_awt(fname, acc):
         N = np.frombuffer(fid.read(4), dtype=np.int32)[0]  # 'integer*4' in MATLAB
         blocksize = np.frombuffer(fid.read(4), dtype=np.int32)[0]  # 'integer*4' in MATLAB
         cthslen = np.frombuffer(fid.read(4), dtype=np.uint32)[0]  # 'ubit'
-        #print(N, blocksize, cthslen)
 
         # Reading the optimal wavelet parameters from the header.
         tq = np.pi / (2 ** (acc[0] - 1) - 1)
         thetas = np.frombuffer(fid.read(2 * N * 8), dtype=np.float64).reshape(N, 2) * tq
-        #print('out',thetas)
+        
         # Reading the level structure.
         depth = np.frombuffer(fid.read(1), dtype=np.uint8)[0]  # 'integer*1' in MATLAB
         L = np.frombuffer(fid.read(4 * (depth + 2)), dtype=np.int32)  # 'integer*4' in MATLAB
-        #print(depth, L)
+        
         # Reading the quantization step parameters.
         maxq = np.frombuffer(fid.read(8), dtype=np.float64)[0]  # 'double' in MATLAB
-        minq = np.frombuffer(fid.read(8), dtype=np.float64)[0]  # 'double' in MATLAB
-        #quantq = np.frombuffer(fid.read(N * (2 * acc[0] // 8)), dtype=np.uint8)  # 'ubit'
+        minq = np.frombuffer(fid.read(8), dtype=np.float64)[0]  # 'double' in MATLAB        
         quantq=np.frombuffer(fid.read(4), dtype=np.float32)
         q = dequantQ(quantq, maxq, minq, 2 * acc[0])
-        #print(maxq, minq, quantq, q)
+        
         # Reading the coefficients of each block.
         top = 0
         bs = acc[0]
-        Cths = np.zeros(N * cthslen, dtype=np.int32)
+        Cths = np.zeros(N * cthslen, dtype=np.float32)
         while fid.tell() < os.path.getsize(f"{fname}.dat"):
             flag = read_bit(fid)
             if flag == 1:
                 Cths[top] = read_bits(fid, bs)
-                #print(Cths[top])
                 top += 1
             else:
                 numzero = read_bits(fid, bs)
                 Cths[top:top + numzero] = 0
-                #print(numzero, Cths[top:top + numzero])
                 top += numzero
 
     # Restoring coefficients vector.
@@ -90,7 +86,7 @@ def decompress_awt(fname, acc):
         Lo_D, Hi_D, Lo_R, Hi_R = genfilt6(thetas[i, 0], thetas[i, 1])
         C[i, :] = Cths[i, :] * q[i]
         ecg[i * blocksize:(i + 1) * blocksize] = waverec(C[i, :], L, Lo_R, Hi_R)
-
+        
     return ecg, C, L, thetas
 
 
