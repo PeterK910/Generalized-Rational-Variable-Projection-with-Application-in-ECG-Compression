@@ -264,6 +264,7 @@ def hyp_mdpso(f, ps_name, s, alpha=0.5, iterno=50, eps=None, show=False, inspart
             tt = tt[: len(f)]
 
             # Displaying the actual dbest dimension and multiplicities and lengths.
+            print("-----------------------------")
             print(f"Dbest dimension: {dbest}")
             print(f"Dbest multiplicities: {mult}")
             print(f"Dbest length: {len_f}")
@@ -307,51 +308,47 @@ def hyp_mdpso(f, ps_name, s, alpha=0.5, iterno=50, eps=None, show=False, inspart
             pn = len(mult)
             cr = (2 * (cn + pn) / len_f) * 100
 
-            plt.cla()
 
-            # plt.subplots(1, 2)
-            unit_disc = np.exp(1j * tt)
-            # plt.plot(unit_disc, 'k')
-            ax[0].plot(unit_disc, "k")
+            theta = np.linspace(0, 2 * np.pi, 100)
+            x = np.cos(theta)
+            y = np.sin(theta)
+            
+            ax[1].clear()
+            ax[1].plot(x, y, 'b', linewidth=4)
+            ax[1].plot([-1, 1], [0, 0], 'k')
+            ax[1].plot([0, 0], [-1, 1], 'k')
+            plt.axis([-1.02, 1.02, -1.02, 1.02])
             plt.title(f"step: {t}")
 
             styles = ["bo", "bx", "b.", "b+", "bs", "bv", "bp", "bh"]
             styles_best = ["ro", "rx", "r.", "r+", "rs", "rv", "rp", "rh"]
 
             for j in range(len(mult)):
-                # plt.plot(sz[j], styles[j])
-                ax[0].plot(sz[j], styles[j])
+                ax[1].plot(np.real(sz[j::len(mult)]), np.imag(sz[j::len(mult)]), styles[j])
 
             # Plotting the global best pole configuration in the dbest dimension.
             # Note: sudden changes on this figure indicate changes in the dbest dimension.
-            for i in range(len(mult)):
-                # plt.plot(array2complex(gbest_coords[i*2-1:i*2]), styles_best[i], markersize=15, linewidth=4)
-                ax[0].plot(
-                    array2complex(gbest_coords[i * 2 - 1 : i * 2]),
+            for i in range(1, len(mult)+1):
+                asd=array2complex(gbest_coords[i * 2 - 2 : i * 2])
+                asd = quant(asd, "pole", eps).T
+                ax[1].plot(
+                    np.real(asd),
+                    np.imag(asd),
                     styles_best[i],
                     markersize=15,
                     linewidth=4,
                 )
 
             # Displaying the rational approximation of the segment.
-            # plt.subplot(1, 2, 1)
-            # plt.plot(tt, np.real(hf), 'b', linewidth=4)
-            ax[1].plot(tt, np.real(hf), "b", linewidth=3)
-
-            # ax[1].plot(tt[:len_f], np.real(seg) + base_line, 'g', linewidth=3)
-            # plt.plot(tt[:len_f], np.real(fs) + base_line, 'r', linewidth=3)
-            ax[1].plot(tt[:len_f], np.real(fs_r)[0] + base_line, "r", linewidth=2)
-            # plt.plot(tt[:len_f], np.real(fs_r)[0] + base_line, 'r', linewidth=1)
-
-            # plt.legend(['Original signal', f'CR: {len_f / (2 * (cn + pn))}:1, PRD: {prd_r}'])
-            ax[1].legend(["Original signal", f"CR: {len_f / (2 * (cn + pn))}:1, PRD: {prd_r}"])
-            # plt.axis('tight')
-            ax[1].axis("tight")
-            plt.pause(0.5)
-            # plt.show()
+            ax[0].clear()
+            ax[0].plot(tt, np.real(hf), "b", linewidth=3)
+            ax[0].plot(tt[:len_f], np.real(fs_r)[0] + base_line, "r", linewidth=2)
+            ax[0].legend(["Original signal", f"CR: {len_f / (2 * (cn + pn)):.2f}:1, PRD: {prd_r:.3f} %"])
+            ax[0].axis("tight")
+            ax[0].grid(True)
+            plt.pause(0.3)
 
     # Return the gbest poles and the quantized coefficients of the dbest dimension.
-    dbest -= 1
     m = ps[dbest][0]
     poles = array2complex(xy_g[dbest])
 

@@ -25,7 +25,7 @@ mat_contents = sio.loadmat(ecg_dbdir + rec_name)
 beats = mat_contents["beats"]
 ecg = mat_contents["ecg"]
 
-show = False  # <-Displays an animation about the optimization.
+show = True  # <-Displays an animation about the optimization.
 
 # Adaptive representation of the kth heartbeat in an ECG record
 k = 0
@@ -57,7 +57,6 @@ print(f'Inverse pole configuration in the best dimension: m=({", ".join(map(str,
 # Plotting the original ECG and the reconstructed signal
 fig, axes = plt.subplots(1, 2, figsize=(13, 6))
 draw_unitcircle(p, m)
-
 x = np.arange(0, M)
 
 axes[0].set_title("Original Signal vs. Approximation")
@@ -65,7 +64,7 @@ axes[0].plot(x, signal.flatten(), "b", label="Original Signal", linewidth=2)
 axes[0].plot(x, (aprx + baseline).flatten(), "r", label="Approximation", linewidth=2)
 axes[0].grid(True)
 axes[0].legend()
-axes[0].set_ylim([-7, 7])
+axes[0].set_ylim([-6, 6])
 
 # Saving the resulting plot to a PNG file
 plt.savefig("results/rational_signal_approx.png")
