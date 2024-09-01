@@ -1,4 +1,4 @@
-# Generalized Rational Variable Projection With Application in ECG Compression [1] <sub>*( Péter Kovács, Sándor Fridli & Ferenc Schipp )*</sub>
+# Generalized Rational Variable Projection With Application in ECG Compression [1] <br/><sub>*( Péter Kovács, Sándor Fridli & Ferenc Schipp )*</sub>
 
 This repository is a translation from matlab. The original code can be viewed on Codeocean, [here.](https://codeocean.com/capsule/0308835/tree/v1) <br/>
 Subordinate translators: Örs Takács & Nguyen Thac Bach
