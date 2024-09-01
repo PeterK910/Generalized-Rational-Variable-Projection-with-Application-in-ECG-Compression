@@ -8,6 +8,7 @@ if __name__ == "__main__":
         package_dir={'': 'code'},
         install_requires=[
             'numpy',
+            'torch',
             'matplotlib',
             'scipy',
             'PyWavelets',
