@@ -80,7 +80,7 @@ def coords2params_all(k: torch.Tensor) -> torch.Tensor:
 
     return p
 
-def multiply_poles(p: torch.Tensor, m: torch.Tensor) -> torch.Tensor:
+def multiply_poles(p: torch.Tensor, m: torch.Tensor, allow_unique: bool=False) -> torch.Tensor:
     """
     Duplicates the elements of 'p' by the elements of 'm'.
 
@@ -117,22 +117,23 @@ def multiply_poles(p: torch.Tensor, m: torch.Tensor) -> torch.Tensor:
         raise ValueError('Length of p and m must be equal.')
     
     # Check if p contains unique poles
-    unique_poles = torch.tensor([p[0]], dtype=p.dtype)
-    for i in range(1,p.numel()):
-        is_unique = True
-        for j in range(unique_poles.numel()):
-            if torch.allclose(p[i], unique_poles[j]):
-                is_unique = False
-                break
-        if is_unique:
-            unique_poles = torch.cat((unique_poles, p[i].unsqueeze(0)))
-            #print(f"unique poles gained a pole, current value: {unique_poles}")
-    if unique_poles.numel() != p.numel():
-        raise ValueError('Poles in p must be unique.')
+    if not allow_unique:
+        unique_poles = torch.tensor([p[0]], dtype=p.dtype)
+        for i in range(1,p.numel()):
+            is_unique = True
+            for j in range(unique_poles.numel()):
+                if torch.allclose(p[i], unique_poles[j]):
+                    is_unique = False
+                    break
+            if is_unique:
+                unique_poles = torch.cat((unique_poles, p[i].unsqueeze(0)))
+                #print(f"unique poles gained a pole, current value: {unique_poles}")
+        if unique_poles.numel() != p.numel():
+            raise ValueError('Poles in p must be unique.')
 
-    # In case p contains only one element and m = [1]
-    if p.numel() == 1 and m[0] == 1:
-        return p
+    # In case p contains only one element and m = [1] 
+    if p.numel() == 1 and m[0] == 1: 
+        return p 
     
     n = p.size(0)
     pp = torch.zeros((1, int(m.sum())), dtype=p.dtype)
