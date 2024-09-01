@@ -1,12 +1,12 @@
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
-from Rational.hyp_mdpso import hyp_mdpso
-from Rational.norm_sig import norm_sig
-from Rational.rait.mt_generate import mt_generate
-from Rational.rait.multiply_poles import multiply_poles
-from Rational.rait.periodize_poles import periodize_poles
-from Rational.Hyperbolic_operators.draw_unitcircle import draw_unitcircle
+from Rational.with_numpy.hyp_mdpso import hyp_mdpso
+from Rational.with_numpy.norm_sig import norm_sig
+from Rational.with_numpy.rait.mt_generate import mt_generate
+from Rational.with_numpy.rait.multiply_poles import multiply_poles
+from Rational.with_numpy.rait.periodize_poles import periodize_poles
+from Rational.with_numpy.Hyperbolic_operators.draw_unitcircle import draw_unitcircle
 
 
 # ------------- Signal approximation by using orthogonal rational functions -------------
@@ -26,7 +26,7 @@ beats = mat_contents["beats"]
 ecg = mat_contents["ecg"]
 
 show = False  # <- Do not turn on for this example program.
-k = 20 # <- Number of beats to approximate
+k = 10 # <- Number of beats to approximate
 
 fig, axes = plt.subplots(1, 2, figsize=(13, 6))
 axes[0].set_facecolor("lightblue")

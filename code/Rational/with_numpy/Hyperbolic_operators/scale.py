@@ -1,5 +1,5 @@
-from Rational.Hyperbolic_operators.section import section
-from Rational.Hyperbolic_operators.eBlaschke import eBlaschke
+from Rational.with_numpy.Hyperbolic_operators.section import section
+from Rational.with_numpy.Hyperbolic_operators.eBlaschke import eBlaschke
 import matplotlib.pyplot as plt
 import numpy as np
 

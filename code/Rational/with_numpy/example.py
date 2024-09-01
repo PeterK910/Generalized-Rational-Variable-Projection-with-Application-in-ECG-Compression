@@ -1,12 +1,12 @@
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
-from Rational.hyp_mdpso import hyp_mdpso
-from Rational.norm_sig import norm_sig
-from Rational.rait.mt_generate import mt_generate
-from Rational.rait.multiply_poles import multiply_poles
-from Rational.rait.periodize_poles import periodize_poles
-from Rational.Hyperbolic_operators.draw_unitcircle import draw_unitcircle
+from Rational.with_numpy.hyp_mdpso import hyp_mdpso
+from Rational.with_numpy.norm_sig import norm_sig
+from Rational.with_numpy.rait.mt_generate import mt_generate
+from Rational.with_numpy.rait.multiply_poles import multiply_poles
+from Rational.with_numpy.rait.periodize_poles import periodize_poles
+from Rational.with_numpy.Hyperbolic_operators.draw_unitcircle import draw_unitcircle
 
 
 # ------------- Signal approximation by using orthogonal rational functions -------------
@@ -48,7 +48,7 @@ mpoles = np.reshape(mpoles, (1, len(mpoles)))
 aprx = np.real(mt_generate(M, mpoles, c))
 
 # Displaying statistical information
-print("------------------- Rational approximation -------------------")
+print("------------------- Rational.with_numpy approximation -------------------")
 print(f"The approximation error in the sense of PRD: {prd:.2f}%")
 print(f"Best dimension index: {dbest}")
 print(f"Number of inverse poles in the best dimension: n={len(p)}")
@@ -67,5 +67,5 @@ axes[0].legend()
 axes[0].set_ylim([-6, 6])
 
 # Saving the resulting plot to a PNG file
-plt.savefig("results/rational_signal_approx.png")
+plt.savefig("results/rational_withnumpy_signal_approx.png")
 plt.show()

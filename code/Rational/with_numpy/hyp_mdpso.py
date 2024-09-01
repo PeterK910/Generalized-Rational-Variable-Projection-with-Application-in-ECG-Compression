@@ -1,5 +1,5 @@
 """
-    Last Modified: July 01, 2024.
+    Last Modified: August 31, 2024.
     Version 1.0.
 
     HYP_MDPSO  - Gives the pole configuration of the continuous MT system 
@@ -71,15 +71,15 @@
 
 """
 
-from Rational.norm_sig import norm_sig
-from Rational.rait.addimag import addimag
-from Rational.rait.mt_coeffs import mt_coeffs
-from Rational.rait.mt_system import mt_system
-from Rational.rait.mt_generate import mt_generate
-from Rational.rait.multiply_poles import multiply_poles
-from Rational.rait.periodize_poles import periodize_poles
-from Rational.Hyperbolic_operators.scale import scale
-from Rational.Hyperbolic_operators.rho import rho
+from Rational.with_numpy.norm_sig import norm_sig
+from Rational.with_numpy.rait.addimag import addimag
+from Rational.with_numpy.rait.mt_coeffs import mt_coeffs
+from Rational.with_numpy.rait.mt_system import mt_system
+from Rational.with_numpy.rait.mt_generate import mt_generate
+from Rational.with_numpy.rait.multiply_poles import multiply_poles
+from Rational.with_numpy.rait.periodize_poles import periodize_poles
+from Rational.with_numpy.Hyperbolic_operators.scale import scale
+from Rational.with_numpy.Hyperbolic_operators.rho import rho
 import numpy as np
 import scipy.io as sio
 import matplotlib.pyplot as plt
@@ -214,7 +214,7 @@ def hyp_mdpso(f, ps_name, s, alpha=0.5, iterno=50, eps=None, show=False, inspart
                 gbesterr_d[xd[a] - 1] = err[a]
 
                 if err[a] < gbesterr_d[dbest]:  # (Step 3.1.4.2.)
-                    dbest = xd[a]
+                    dbest = xd[a] - 1
 
         for m in range(1, maxpn + 1):
             for a in range(s):
@@ -264,10 +264,10 @@ def hyp_mdpso(f, ps_name, s, alpha=0.5, iterno=50, eps=None, show=False, inspart
             tt = tt[: len(f)]
 
             # Displaying the actual dbest dimension and multiplicities and lengths.
-            print("-----------------------------")
-            print(f"Dbest dimension: {dbest}")
-            print(f"Dbest multiplicities: {mult}")
-            print(f"Dbest length: {len_f}")
+            print(f"step {t} -----------------------")
+            print(f"   Dbest dimension: {dbest}")
+            print(f"   Dbest multiplicities: {mult}")
+            print(f"   Dbest length: {len_f}")
 
             # Displaying the pole configuration of each particle in the dbest dimension.
             sz = np.zeros_like(xx[db])

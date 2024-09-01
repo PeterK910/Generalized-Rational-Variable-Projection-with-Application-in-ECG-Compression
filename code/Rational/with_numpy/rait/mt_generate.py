@@ -1,5 +1,5 @@
 import numpy
-from Rational.rait.mt_system import mt_system
+from Rational.with_numpy.rait.mt_system import mt_system
 
 
 def mt_generate(len, poles, coeffs):
