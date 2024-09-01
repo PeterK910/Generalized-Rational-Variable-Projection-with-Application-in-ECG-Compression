@@ -20,7 +20,7 @@ acc = np.array([8])  # Use 8 bits for quantizing the compressed data
 PRD_limit = 10  # PRD limit for approximation
 blocksize = 1024  # Segment size
 depth = 7  # Depth of wavelet tree
-show = False  # Control for displaying optimization steps
+show = True  # Control for displaying optimization steps
 
 # Adaptive representation of a heartbeat in an ECG record
 k = 0  # Example heartbeat index
@@ -40,12 +40,14 @@ if os.path.exists(outfile + '.dat'):
 
 # Plotting the original ECG and the reconstructed signal
 x = np.arange(M)
-plt.figure()
-plt.gca().set_aspect("auto", adjustable="box")
-plt.plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
-plt.plot(x, aprx, 'r', label='Approximation', linewidth=2)
-plt.grid(True)
-plt.legend()
+if show:
+    plt.gca()
+else:
+    plt.figure()
+    plt.plot(x, signal.flatten(), 'b', label='Original Signal', linewidth=2)
+    plt.plot(x, aprx, 'r', label='Approximation', linewidth=2)
+    plt.grid(True)
+    plt.legend()
 
 # Save the resulting plot to a PNG file
 

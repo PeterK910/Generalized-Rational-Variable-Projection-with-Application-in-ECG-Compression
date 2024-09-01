@@ -28,15 +28,9 @@ def opt_params_wt(beat, PRD_limit, depth, acc, show, params):
     for K in range(0, len(C), 5):
         Cths = np.copy(C)
         Cths[indC[K:]] = np.zeros(len(Cths) - K)
-        #Cths[indC[K:]] = np.zeros((len(Cths) - K, 1, 1))
         Cths, q = quant(Cths, acc[0])
         Cths = dequant(Cths, q)
-        #print(Cths)
-        #print(L)
         aprx = waverec(Cths, L, Lo_R, Hi_R)
-        #print(aprx)
-        #print(K, '---------------')
-        #exit(0)
         PRD = np.linalg.norm(beat - aprx) / np.linalg.norm(beat - np.mean(beat)) * 100
         CR = K / len(Cths) * 100
         if PRD <= PRD_limit or K==50:
@@ -44,12 +38,16 @@ def opt_params_wt(beat, PRD_limit, depth, acc, show, params):
     
     if show:
         x = np.arange(len(beat))
-        plt.plot(x, beat, 'b', x, aprx, 'r', linewidth=2)
-        h = plt.legend([f'PRD: {PRD:.2f} %', f'CR: {CR:.0f}%'])
-        plt.setp(h, fontsize=15)
+        plt.gcf()
+        plt.cla()
+        plt.plot(x, beat, 'b', label='Original signal', linewidth=2)
+        plt.plot(x, aprx, 'r', label='Approximation', linewidth=2)
+        plt.title([f'PRD: {PRD:.2f} %', f'CR: {CR:.0f}%'])
+        plt.legend()
         plt.axis([0, len(beat), min(beat), max(beat)])
+        plt.grid(True)
         plt.draw()
-        plt.show()
+        plt.pause(0.3)
 
     return CR, PRD, Cths, q, L
 
