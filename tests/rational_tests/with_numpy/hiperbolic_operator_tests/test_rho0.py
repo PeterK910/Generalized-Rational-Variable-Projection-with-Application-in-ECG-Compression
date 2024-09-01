@@ -1,4 +1,4 @@
-from Rational.Hyperbolic_operators.rho0 import rho0
+from Rational.with_numpy.Hyperbolic_operators.rho0 import rho0
 import numpy as np
 import numpy.testing as npt
 

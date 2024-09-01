@@ -1,4 +1,4 @@
-from Rational.rait.mt_coeffs import mt_coeffs
+from Rational.with_numpy.rait.mt_coeffs import mt_coeffs
 import numpy as np
 import numpy.testing as npt
 

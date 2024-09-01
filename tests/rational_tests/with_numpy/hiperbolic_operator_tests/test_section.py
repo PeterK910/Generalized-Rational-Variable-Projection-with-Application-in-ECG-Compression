@@ -1,4 +1,4 @@
-from Rational.Hyperbolic_operators.section import section
+from Rational.with_numpy.Hyperbolic_operators.section import section
 import numpy as np
 import numpy.testing as npt
 
