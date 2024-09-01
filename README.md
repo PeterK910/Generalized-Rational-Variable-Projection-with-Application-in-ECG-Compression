@@ -3,6 +3,8 @@
 This repository is a translation from matlab. The original code can be viewed on Codeocean, [here.](https://codeocean.com/capsule/0308835/tree/v1) <br/>
 Subordinate translators: Örs Takács & Nguyen Thac Bach
 
+![Tests](https://github.com/Denotron/Generalized-Rational-Variable-Projection-with-Application-in-ECG-Compression/actions/workflows/tests.yml/badge.svg)
+
 ## Structure of the Python Toolbox
 ```
 / [root]
