@@ -1,4 +1,4 @@
-from Rational.with_numpy.rait.addimag import addimag
+from Rational.rait.addimag import addimag
 import numpy as np
 import numpy.testing as npt
 

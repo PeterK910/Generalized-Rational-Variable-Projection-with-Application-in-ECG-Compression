@@ -1,4 +1,4 @@
-from Rational.with_numpy.rait.mt_generate import mt_generate
+from Rational.rait.mt_generate import mt_generate
 import numpy as np
 import numpy.testing as npt
 

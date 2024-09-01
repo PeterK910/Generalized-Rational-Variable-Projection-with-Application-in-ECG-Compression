@@ -1,4 +1,4 @@
-from Rational.with_numpy.Hyperbolic_operators.eBlaschke import eBlaschke
+from Rational.Hyperbolic_operators.eBlaschke import eBlaschke
 import numpy as np
 import numpy.testing as npt
 

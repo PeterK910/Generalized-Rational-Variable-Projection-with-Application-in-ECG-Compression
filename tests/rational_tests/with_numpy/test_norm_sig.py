@@ -1,4 +1,4 @@
-from Rational.with_numpy.norm_sig import norm_sig
+from Rational.norm_sig import norm_sig
 import numpy as np
 import pytest
 import numpy.testing as npt
