@@ -1,4 +1,4 @@
-from Rational.rait.periodize_poles import periodize_poles
+from Rational.with_numpy.rait.periodize_poles import periodize_poles
 import numpy as np
 import numpy.testing as npt
 

@@ -1,4 +1,4 @@
-from Rational.rait.multiply_poles import multiply_poles
+from Rational.with_numpy.rait.multiply_poles import multiply_poles
 import numpy as np
 import pytest
 import numpy.testing as npt
